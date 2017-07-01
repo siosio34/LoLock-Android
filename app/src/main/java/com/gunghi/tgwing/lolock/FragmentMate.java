@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.gunghi.tgwing.lolock.Response.Mate;
+import com.gunghi.tgwing.lolock.model.Mate;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class FragmentMate extends Fragment {
             holder.mateDoorOpenTime.setText(mateInfo.getMateDoorOpenTime());
             holder.mateOutingFlag.setImageResource(R.drawable.ic_out_home);
             Picasso.with(holder.mateProfile.getContext()).load(mateInfo.getMateImageUrl()).into(holder.mateProfile);
-            // TODO: 2017. 7. 1. 이미지 수정하는거 추가해야됨.! 
+            // TODO: 2017. 7. 1. 이미지 수정하는거 추가해야됨.!
 
         }
 

@@ -1,5 +1,5 @@
 
-package com.gunghi.tgwing.lolock.Response;
+package com.gunghi.tgwing.lolock.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
