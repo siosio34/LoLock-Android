@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_home"
+        android:icon="@drawable/ic_home_unselected"
+        android:title="Home" />
+    <item
+        android:id="@+id/menu_family"
+        android:icon="@drawable/ic_familiy"
+        android:title="familiy" />
+    <item
+        android:id="@+id/menu_info"
+        android:icon="@drawable/ic_information"
+        android:title="info" />
+    <item
+        android:id="@+id/menu_alarm"
+        android:icon="@drawable/ic_alarm"
+        android:title="alarm" />
+</menu>

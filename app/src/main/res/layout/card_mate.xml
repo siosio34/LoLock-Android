@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#FFFFFF"
+    android:layout_marginBottom="2dp"
+    >
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/mateProfileImageView"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_sample_profile"
+        />
+
+    <TextView
+        android:id="@+id/mateNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="큰 딸"
+        android:textSize="16sp"
+        android:textColor="#FC7336"
+        app:layout_constraintTop_toTopOf="@+id/mateProfileImageView"
+        app:layout_constraintLeft_toRightOf="@+id/mateProfileImageView"
+        android:layout_marginLeft="8dp"
+        />
+
+    <TextView
+        android:id="@+id/mateOutingTimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="20분 전에 출입했습니다."
+        android:textSize="14sp"
+        android:textColor="#313131"
+        app:layout_constraintBottom_toBottomOf="@+id/mateProfileImageView"
+        app:layout_constraintLeft_toRightOf="@+id/mateProfileImageView"
+        android:layout_marginLeft="8dp"
+        />
+
+    <ImageView
+        android:id="@+id/mateOutingFlag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_out_home"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        />
+
+
+</android.support.constraint.ConstraintLayout>
