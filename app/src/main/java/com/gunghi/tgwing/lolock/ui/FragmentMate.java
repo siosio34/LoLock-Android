@@ -1,4 +1,4 @@
-package com.gunghi.tgwing.lolock;
+package com.gunghi.tgwing.lolock.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.model.Mate;
 import com.squareup.picasso.Picasso;
 

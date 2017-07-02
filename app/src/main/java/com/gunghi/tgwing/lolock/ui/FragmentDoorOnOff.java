@@ -1,4 +1,4 @@
-package com.gunghi.tgwing.lolock;
+package com.gunghi.tgwing.lolock.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+
+import com.gunghi.tgwing.lolock.R;
 
 /**
  * Created by joyeongje on 2017. 7. 1..
