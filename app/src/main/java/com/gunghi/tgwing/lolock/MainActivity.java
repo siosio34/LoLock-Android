@@ -16,6 +16,7 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,7 +56,11 @@ public class MainActivity extends AppCompatActivity  {
 
     FragmentDoorOnOff fragmentDoorOnOff;
     FragmentMate      fragmentMate     ;
+
+    // TODO: 2017-07-02 연결이 되었을때 끊어야함.
     private boolean mScanning;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +85,7 @@ public class MainActivity extends AppCompatActivity  {
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
         }
-        //scanLeDevice(true);
+        scanLeDevice(true);
     }
 
     @Override
@@ -97,34 +102,6 @@ public class MainActivity extends AppCompatActivity  {
         super.onPause();
         //scanLeDevice(false);
     }
-
-    private void scanLeDevice(final boolean enable) {
-        if (enable) {
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (Build.VERSION.SDK_INT < 21) {
-                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    } else {
-                        mLEScanner.stopScan(mScanCallback);
-                    }
-                }
-            }, SCAN_PERIOD);
-            if (Build.VERSION.SDK_INT < 21) {
-                mBluetoothAdapter.startLeScan(mLeScanCallback);
-            } else {
-                mLEScanner.startScan(filters, settings, mScanCallback);
-            }
-        } else {
-            if (Build.VERSION.SDK_INT < 21) {
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-            } else {
-                mLEScanner.stopScan(mScanCallback);
-            }
-        }
-
-    }
-
 
     private void initView(Bundle savedInstanceState) {
         mainTitleTextView = (TextView) findViewById(R.id.mainActivityTitleTextView);
@@ -235,6 +212,33 @@ public class MainActivity extends AppCompatActivity  {
             mGatt = device.connectGatt(this, false, gattCallback);
             scanLeDevice(false);// will stop after first device detection
         }
+    }
+
+    private void scanLeDevice(final boolean enable) {
+        if (enable) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (Build.VERSION.SDK_INT < 21) {
+                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    } else {
+                        mLEScanner.stopScan(mScanCallback);
+                    }
+                }
+            }, SCAN_PERIOD);
+            if (Build.VERSION.SDK_INT < 21) {
+                mBluetoothAdapter.startLeScan(mLeScanCallback);
+            } else {
+                mLEScanner.startScan(filters, settings, mScanCallback);
+            }
+        } else {
+            if (Build.VERSION.SDK_INT < 21) {
+                mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            } else {
+                mLEScanner.stopScan(mScanCallback);
+            }
+        }
+
     }
 
     private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {

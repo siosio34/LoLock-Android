@@ -1,4 +1,4 @@
-package com.gunghi.tgwing.lolock;
+package com.gunghi.tgwing.lolock.bluetooth;
 
 import java.util.HashMap;
 

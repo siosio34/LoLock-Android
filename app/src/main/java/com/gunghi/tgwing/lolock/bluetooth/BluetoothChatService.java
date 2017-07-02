@@ -1,4 +1,4 @@
-package com.gunghi.tgwing.lolock;
+package com.gunghi.tgwing.lolock.bluetooth;
 
 /**
  * Created by joyeongje on 2017. 7. 1..
@@ -29,6 +29,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
+import com.gunghi.tgwing.lolock.Constants;
 
 import java.io.IOException;
 import java.io.InputStream;
