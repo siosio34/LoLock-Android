@@ -5,11 +5,9 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -33,13 +31,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.bluetooth.BluetoothLeService;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tsengvn.typekit.TypekitContextWrapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -62,6 +67,13 @@ public class MainActivity extends AppCompatActivity  {
     private ScanSettings settings;
     private List<ScanFilter> filters;
     private BluetoothGatt mGatt;
+
+    private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
+            new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
+
+    private BluetoothGattCharacteristic mNotifyCharacteristic;
+
+    private BluetoothGattCharacteristic writableChar;
 
     private String mDeviceAddress;
     private boolean mConnected = false;
@@ -89,6 +101,7 @@ public class MainActivity extends AppCompatActivity  {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
+            Log.d("여기기기","드러러러ㅓ옴");
             // Automatically connects to the device upon successful start-up initialization.
             mBluetoothLeService.connect(mDeviceAddress);
         }
@@ -110,6 +123,43 @@ public class MainActivity extends AppCompatActivity  {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                mConnected = true;
+                Log.d("mGattUpdateReceiver", "ACTION_GATT_CONNECTED 연결");
+                Log.d("Service Size", String.valueOf(mBluetoothLeService.getSupportedGattServices().size()));
+
+
+                if(mBluetoothLeService.getSupportedGattServices() != null) {
+
+                    String uuid = null;
+                    String unknownServiceString = "";
+                    String unknownCharaString = "";
+
+                    ArrayList<HashMap<String, String>> gattServiceData = new ArrayList<HashMap<String, String>>();
+                    ArrayList<ArrayList<HashMap<String, String>>> gattCharacteristicData
+                            = new ArrayList<ArrayList<HashMap<String, String>>>();
+
+                    for(BluetoothGattService gattService : mBluetoothLeService.getSupportedGattServices()) {
+
+                        Log.d("gattService",gattService.toString());
+
+                        List<BluetoothGattCharacteristic> gattCharacteristics =
+                                gattService.getCharacteristics();
+
+
+                    }
+
+                    //HashMap<String, String> currentServiceData = new HashMap<String, String>();
+                    //uuid = gattService.getUuid().toString();
+                }
+
+
+
+
+
+                //String temp = "jonggu ssibal";
+                //writableChar.setValue();
+                //mBluetoothLeService.setCharacteristicNotification(writableChar,true);
+
                // mConnected = true;
                // updateConnectionState(R.string.connected);
                // invalidateOptionsMenu();
@@ -119,11 +169,14 @@ public class MainActivity extends AppCompatActivity  {
               //  invalidateOptionsMenu();
 
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                Log.d("BluetoothLeService","ACTION_GATT_SERVICES_DISCOVERED");
             //    // Show all the supported services and characteristics on the user interface.
             //    displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
           //      displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
+
+
         }
     };
 
@@ -168,11 +221,30 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initView(savedInstanceState);
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override public void onPermissionGranted(PermissionGrantedResponse response) {/* ... */}
+                    @Override public void onPermissionDenied(PermissionDeniedResponse response) {/* ... */}
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(com.karumi.dexter.listener.PermissionRequest permission, PermissionToken token) {
+
+                    }
+
+                }).check();
+
+        initLocationPermission();
         initFragment();
+        initView(savedInstanceState);
+
         checkBLE();
 
        // mBottomBar = (BottomBar) findViewById(R.id.mainActivityBottomBar);
+    }
+
+    private void initLocationPermission() {
+
     }
 
     @Override
@@ -300,6 +372,7 @@ public class MainActivity extends AppCompatActivity  {
     private void initFragment() {
         fragmentDoorOnOff = new FragmentDoorOnOff();
         fragmentMate      = new FragmentMate();
+        currentSelectedFragment = fragmentDoorOnOff;
     }
 
     private void checkBLE() {
@@ -343,8 +416,17 @@ public class MainActivity extends AppCompatActivity  {
             Log.i("callbackType", String.valueOf(callbackType));
             Log.i("result", result.toString());
             BluetoothDevice btDevice = result.getDevice();
-            // TODO: 2017. 7. 1. 자동연결할거 생각해야됨.
-            //connectToDevice(btDevice);
+            if(btDevice.getName()!= null) {
+                String deviceName = btDevice.getName();
+                if(deviceName.contains("LoLock")) {
+                    Log.d("device 자동검색","성공");
+                    mDeviceAddress = btDevice.getAddress();
+                    mBluetoothLeService.connect(mDeviceAddress);
+
+
+                }
+            }
+
         }
 
         @Override
@@ -366,7 +448,8 @@ public class MainActivity extends AppCompatActivity  {
                 public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
                     // TODO: 2017. 7. 1.
                     // TODO: 2017. 7. 1. 자동연결할거 생각해야됨.
-                    // 연결하면 스캐닝 중지해야됨
+                    // 연결하면 스캐닝 중지해야됨x
+
                 }
             };
 
