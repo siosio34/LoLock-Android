@@ -48,9 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 
 
-
-
-
 public class MainActivity extends AppCompatActivity  {
 
     private final static String TAG = MainActivity.class.getSimpleName();
@@ -71,7 +68,7 @@ public class MainActivity extends AppCompatActivity  {
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
 
-    private BluetoothGattCharacteristic mNotifyCharacteristic;
+    private BluetoothGattCharacteristic writeAbleCharacteristic;
 
     private BluetoothGattCharacteristic writableChar;
 
@@ -135,7 +132,9 @@ public class MainActivity extends AppCompatActivity  {
               //  invalidateOptionsMenu();
 
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+
                 Log.d("BluetoothLeService","ACTION_GATT_SERVICES_DISCOVERED");
+                Log.d("Service Size2", String.valueOf(mBluetoothLeService.getSupportedGattServices().size()));
                 if(mBluetoothLeService.getSupportedGattServices() != null) {
 
                     String uuid = null;
@@ -151,11 +150,47 @@ public class MainActivity extends AppCompatActivity  {
 
 
                     for(BluetoothGattService gattService : mBluetoothLeService.getSupportedGattServices()) {
-
                         Log.d("gattService",gattService.toString());
 
-                        List<BluetoothGattCharacteristic> gattCharacteristics =
-                                gattService.getCharacteristics();
+                        for (BluetoothGattCharacteristic characteristic : gattService.getCharacteristics()) {
+
+                            String mUUid = characteristic.getUuid().toString();
+                            final int charaProp = characteristic.getProperties();
+
+                            Log.d("mUUId, uuid",mUUid + "," + String.valueOf(charaProp));
+                            // TODO: 2017. 7. 15. 특정 아이디에만쓰는것도 해야됨.
+
+                            if (((charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE) |
+                                    (charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE)) > 0) {
+                                writeAbleCharacteristic = characteristic;
+                                Log.d("쓰기 가능한 서비스",String.valueOf(writeAbleCharacteristic.getProperties()));
+                                String temp = "1";
+                                writeAbleCharacteristic.setValue(temp.getBytes());
+                                writeAbleCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+                                mBluetoothLeService.writeCharacterisstic(writeAbleCharacteristic);
+                                //break;
+                            }
+
+                           // if(mUUid.equals(SampleGattAttributes.HEART_RATE_MEASUREMENT)) {
+                           //     Log.d("HeartLateService",gattService.toString());
+                           //     Log.d("characteristic",characteristic.toString());
+                           //     mNotifyCharacteristic = characteristic;
+                           //     mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+                           //     mNotifyCharacteristic.setValue("jounggu");
+                           //     mBluetoothLeService.writeCharacterisstic(mNotifyCharacteristic);
+                           //     // Enable or disable notifications/indications for a given characteristic.
+                           //     //characteristic.setValue(bytes);
+                           //     //characteristic.setValue("testing");
+                           //     //characteristic.setWriteType(BluetoothGattCharacteristic.PERMISSION_WRITE);
+                           // }
+                        }
+
+//
+
+                       // List<BluetoothGattCharacteristic> gattCharacteristics =
+                       //         gattService.getCharacteristics();
+
+
 
 
 
@@ -170,7 +205,7 @@ public class MainActivity extends AppCompatActivity  {
 
 
 
-                //String temp = "jonggu ssibal";
+                //
                 //writableChar.setValue();
                 //mBluetoothLeService.setCharacteristicNotification(writableChar,true);
 
@@ -425,7 +460,7 @@ public class MainActivity extends AppCompatActivity  {
             BluetoothDevice btDevice = result.getDevice();
             if(btDevice.getName()!= null) {
                 String deviceName = btDevice.getName();
-                if(deviceName.contains("LoLock")) {
+                if(deviceName.contains("Bluno")) {
                     Log.d("device 자동검색","성공");
                     mDeviceAddress = btDevice.getAddress();
                     mBluetoothLeService.connect(mDeviceAddress);
