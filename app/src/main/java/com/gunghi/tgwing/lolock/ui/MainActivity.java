@@ -128,6 +128,14 @@ public class MainActivity extends AppCompatActivity  {
                 Log.d("Service Size", String.valueOf(mBluetoothLeService.getSupportedGattServices().size()));
 
 
+
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+              //  mConnected = false;
+              //  updateConnectionState(R.string.disconnected);
+              //  invalidateOptionsMenu();
+
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                Log.d("BluetoothLeService","ACTION_GATT_SERVICES_DISCOVERED");
                 if(mBluetoothLeService.getSupportedGattServices() != null) {
 
                     String uuid = null;
@@ -138,12 +146,18 @@ public class MainActivity extends AppCompatActivity  {
                     ArrayList<ArrayList<HashMap<String, String>>> gattCharacteristicData
                             = new ArrayList<ArrayList<HashMap<String, String>>>();
 
+                    // supported Service안되면
+                    // mBluetoothLeService.
+
+
                     for(BluetoothGattService gattService : mBluetoothLeService.getSupportedGattServices()) {
 
                         Log.d("gattService",gattService.toString());
 
                         List<BluetoothGattCharacteristic> gattCharacteristics =
                                 gattService.getCharacteristics();
+
+
 
 
                     }
@@ -160,16 +174,9 @@ public class MainActivity extends AppCompatActivity  {
                 //writableChar.setValue();
                 //mBluetoothLeService.setCharacteristicNotification(writableChar,true);
 
-               // mConnected = true;
-               // updateConnectionState(R.string.connected);
-               // invalidateOptionsMenu();
-            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
-              //  mConnected = false;
-              //  updateConnectionState(R.string.disconnected);
-              //  invalidateOptionsMenu();
-
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                Log.d("BluetoothLeService","ACTION_GATT_SERVICES_DISCOVERED");
+                // mConnected = true;
+                // updateConnectionState(R.string.connected);
+                // invalidateOptionsMenu();
             //    // Show all the supported services and characteristics on the user interface.
             //    displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
