@@ -9,9 +9,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -25,7 +23,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.IdRes;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -124,8 +121,6 @@ public class MainActivity extends AppCompatActivity  {
                 Log.d("mGattUpdateReceiver", "ACTION_GATT_CONNECTED 연결");
                 Log.d("Service Size", String.valueOf(mBluetoothLeService.getSupportedGattServices().size()));
 
-
-
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
               //  mConnected = false;
               //  updateConnectionState(R.string.disconnected);
@@ -162,14 +157,18 @@ public class MainActivity extends AppCompatActivity  {
 
                             if (((charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE) |
                                     (charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE)) > 0) {
+
                                 writeAbleCharacteristic = characteristic;
                                 Log.d("쓰기 가능한 서비스",String.valueOf(writeAbleCharacteristic.getProperties()));
-                                String temp = "1";
+                                String temp = "jonggusibal" + '\0';
+
+
                                 writeAbleCharacteristic.setValue(temp.getBytes());
                                 writeAbleCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
                                 mBluetoothLeService.writeCharacterisstic(writeAbleCharacteristic);
-                                //break;
+
                             }
+
 
                            // if(mUUid.equals(SampleGattAttributes.HEART_RATE_MEASUREMENT)) {
                            //     Log.d("HeartLateService",gattService.toString());
@@ -189,10 +188,6 @@ public class MainActivity extends AppCompatActivity  {
 
                        // List<BluetoothGattCharacteristic> gattCharacteristics =
                        //         gattService.getCharacteristics();
-
-
-
-
 
 
                     }
@@ -348,27 +343,17 @@ public class MainActivity extends AppCompatActivity  {
 
     private void scanLeDevice(final boolean enable) {
         if (enable) {
+
+            mBluetoothAdapter.startLeScan(mLeScanCallback);
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (Build.VERSION.SDK_INT < 21) {
-                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    } else {
-                        mLEScanner.stopScan(mScanCallback);
-                    }
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
                 }
             }, SCAN_PERIOD);
-            if (Build.VERSION.SDK_INT < 21) {
-                mBluetoothAdapter.startLeScan(mLeScanCallback);
-            } else {
-                mLEScanner.startScan(filters, settings, mScanCallback);
-            }
+
         } else {
-            if (Build.VERSION.SDK_INT < 21) {
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-            } else {
-                mLEScanner.stopScan(mScanCallback);
-            }
+            mBluetoothAdapter.stopLeScan(mLeScanCallback);
         }
 
     }
@@ -449,48 +434,57 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private ScanCallback mScanCallback = new ScanCallback() {
+  // @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  // private ScanCallback mScanCallback = new ScanCallback() {
 
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            Log.d("mScanCallbackTest","여기들어옴");
-            Log.i("callbackType", String.valueOf(callbackType));
-            Log.i("result", result.toString());
-            BluetoothDevice btDevice = result.getDevice();
-            if(btDevice.getName()!= null) {
-                String deviceName = btDevice.getName();
-                if(deviceName.contains("Bluno")) {
-                    Log.d("device 자동검색","성공");
-                    mDeviceAddress = btDevice.getAddress();
-                    mBluetoothLeService.connect(mDeviceAddress);
+  //     @Override
+  //     public void onScanResult(int callbackType, ScanResult result) {
+  //         Log.d("mScanCallbackTest","여기들어옴");
+  //         Log.i("callbackType", String.valueOf(callbackType));
+  //         Log.i("result", result.toString());
+  //         BluetoothDevice btDevice = result.getDevice();
+  //         if(btDevice.getName()!= null) {
+  //             String deviceName = btDevice.getName();
+  //             if(deviceName.contains("LoLock")) {
+  //                 Log.d("device 자동검색","성공");
+  //                 mDeviceAddress = btDevice.getAddress();
+  //                 mBluetoothLeService.connect(mDeviceAddress);
+  //             }
+  //         }
 
+  //     }
 
-                }
-            }
+  //     @Override
+  //     public void onBatchScanResults(List<ScanResult> results) {
+  //         for (ScanResult sr : results) {
+  //             Log.i("ScanResult - Results", sr.toString());
+  //         }
+  //     }
 
-        }
-
-        @Override
-        public void onBatchScanResults(List<ScanResult> results) {
-            for (ScanResult sr : results) {
-                Log.i("ScanResult - Results", sr.toString());
-            }
-        }
-
-        @Override
-        public void onScanFailed(int errorCode) {
-            Log.e("Scan Failed", "Error Code: " + errorCode);
-        }
-    };
+  //     @Override
+  //     public void onScanFailed(int errorCode) {
+  //         Log.e("Scan Failed", "Error Code: " + errorCode);
+  //     }
+  // };
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
             new BluetoothAdapter.LeScanCallback() {
                 @Override
                 public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-                    // TODO: 2017. 7. 1.
-                    // TODO: 2017. 7. 1. 자동연결할거 생각해야됨.
-                    // 연결하면 스캐닝 중지해야됨x
+
+                    Log.d("mScanCallbackTest","여기들어옴");
+                    Log.i("callbackType", String.valueOf(rssi));
+                    Log.i("result", scanRecord.toString());
+                    if(device.getName()!= null) {
+                        String deviceName = device.getName();
+                        if(deviceName.contains("LoLock")) {
+                            Log.d("device 자동검색","성공");
+                            mDeviceAddress = device.getAddress();
+                            mBluetoothLeService.connect(mDeviceAddress);
+                        }
+                    }
+
+
 
                 }
             };
