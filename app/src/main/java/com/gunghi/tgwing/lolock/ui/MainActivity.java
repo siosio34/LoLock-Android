@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity  {
                                 writeAbleCharacteristic.setValue(temp.getBytes());
                                 writeAbleCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
                                 mBluetoothLeService.writeCharacterisstic(writeAbleCharacteristic);
-
+                                //mBluetoothLeService.setCharacteristicNotification(writeAbleCharacteristic,true);
                             }
 
 
@@ -210,6 +210,7 @@ public class MainActivity extends AppCompatActivity  {
             //    // Show all the supported services and characteristics on the user interface.
             //    displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                Log.d("드루와", intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
           //      displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
 
@@ -343,7 +344,6 @@ public class MainActivity extends AppCompatActivity  {
 
     private void scanLeDevice(final boolean enable) {
         if (enable) {
-
             mBluetoothAdapter.startLeScan(mLeScanCallback);
             mHandler.postDelayed(new Runnable() {
                 @Override
@@ -471,21 +471,18 @@ public class MainActivity extends AppCompatActivity  {
             new BluetoothAdapter.LeScanCallback() {
                 @Override
                 public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-
                     Log.d("mScanCallbackTest","여기들어옴");
                     Log.i("callbackType", String.valueOf(rssi));
                     Log.i("result", scanRecord.toString());
                     if(device.getName()!= null) {
                         String deviceName = device.getName();
+                        Log.d("deviceName",deviceName);
                         if(deviceName.contains("LoLock")) {
                             Log.d("device 자동검색","성공");
                             mDeviceAddress = device.getAddress();
                             mBluetoothLeService.connect(mDeviceAddress);
                         }
                     }
-
-
-
                 }
             };
 

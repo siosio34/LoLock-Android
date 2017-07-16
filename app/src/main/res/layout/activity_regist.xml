@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LoLock 기기 등록"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="48dp"
+
+        />
+
+    <TextView
+        android:id="@+id/registActivityTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="기기에 있는 일련번호를 입력해주세요"
+        android:textColor="#FC6928"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="220dp"
+       />
+
+    <EditText
+        android:id="@+id/registActivityDeviceIdTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColorHighlight="#FC6928"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registActivityTextView"
+        />
+
+</android.support.constraint.ConstraintLayout>

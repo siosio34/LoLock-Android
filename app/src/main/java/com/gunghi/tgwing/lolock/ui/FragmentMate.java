@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,19 +15,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gunghi.tgwing.lolock.R;
+import com.gunghi.tgwing.lolock.Response.ResponseMate;
 import com.gunghi.tgwing.lolock.model.Mate;
+import com.gunghi.tgwing.lolock.network.LoLockService;
+import com.gunghi.tgwing.lolock.network.LoLockServiceGenarator;
 import com.squareup.picasso.Picasso;
-import com.tsengvn.typekit.TypekitContextWrapper;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by joyeongje on 2017. 7. 1..
  */
 
 public class FragmentMate extends Fragment {
+
+    private ArrayList<Mate> mates;
+    private MateAdapter mateAdapter;
+    private final String TAG = "FragmentMate";
 
 
     @Nullable
@@ -39,16 +49,47 @@ public class FragmentMate extends Fragment {
         mateRecyclerView.setHasFixedSize(true);
         mateRecyclerView.scrollToPosition(0);
 
-        ArrayList<Mate> mates = new ArrayList<>();
-        mates.add(new Mate("http://cfile3.uf.tistory.com/image/246667375764E38E1D1A93","임정연","in","10분"));
-        mates.add(new Mate("http://cfile3.uf.tistory.com/image/246667375764E38E1D1A93","임정연","in","10분"));
-        mates.add(new Mate("http://cfile3.uf.tistory.com/image/246667375764E38E1D1A93","임정연","in","10분"));
+        mates = new ArrayList<>();
 
-        MateAdapter mateAdapter = new MateAdapter(mates,getContext());
+
+        //mates.add(new Mate("http://cfile3.uf.tistory.com/image/246667375764E38E1D1A93","임정연","in","10분"));
+        //mates.add(new Mate("http://cfile3.uf.tistory.com/image/246667375764E38E1D1A93","임정연","in","10분"));
+        //mates.add(new Mate("http://cfile3.uf.tistory.com/image/246667375764E38E1D1A93","임정연","in","10분"));
+
+        mateAdapter = new MateAdapter(mates,getContext());
         mateRecyclerView.setAdapter(mateAdapter);
         mateRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        getMateList();
 
         return rootView;
+    }
+
+    private void getMateList() {
+        LoLockService loLockService = LoLockServiceGenarator.createService(LoLockService.class);
+        String ltid = "00000174d02544fffef0103d";
+        Call<ResponseMate> responseMate = loLockService.getHomeMateResponse(ltid);
+        responseMate.enqueue(new Callback<ResponseMate>() {
+            @Override
+            public void onResponse(Call<ResponseMate> call, Response<ResponseMate> response) {
+                Log.d(TAG,"Response" + response.toString());
+
+
+                if(response.isSuccessful()) {
+                    Log.d(TAG,"RoomMateList Response Success");
+                    for (Mate mate : response.body().getMates()) {
+                        mates.add(mate);
+                    }
+                    mateAdapter.notifyDataSetChanged();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseMate> call, Throwable t) {
+                Log.d(TAG,"URL or Server Error");
+            }
+        });
+
     }
 
     private class MateAdapter extends RecyclerView.Adapter<MateAdapter.ViewHolder>  {
