@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1076942403851",
+    "firebase_url": "https://lolock-5ee55.firebaseio.com",
+    "project_id": "lolock-5ee55",
+    "storage_bucket": "lolock-5ee55.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1076942403851:android:bbf5df34ab2eb04a",
+        "android_client_info": {
+          "package_name": "com.gunghi.tgwing.lolock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1076942403851-649errgesgcs53hrfinb3q1q4i331fgk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gunghi.tgwing.lolock",
+            "certificate_hash": "461a4eea1d06d912f5ba34a7122953d8986077ae"
+          }
+        },
+        {
+          "client_id": "1076942403851-mrt95aun9t87hmjsrgnggb663r27kdbi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlcIA8Da_DaDdp9QtWdcjSWeRFM426bvs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1076942403851-mrt95aun9t87hmjsrgnggb663r27kdbi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
