@@ -399,6 +399,7 @@ public class MainActivity extends AppCompatActivity  {
     private void initFragment() {
         fragmentDoorOnOff = new FragmentDoorOnOff();
         fragmentMate      = new FragmentMate();
+
         currentSelectedFragment = fragmentDoorOnOff;
     }
 
@@ -451,6 +452,8 @@ public class MainActivity extends AppCompatActivity  {
   //                 mBluetoothLeService.connect(mDeviceAddress);
   //             }
   //         }
+
+
 
   //     }
 

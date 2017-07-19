@@ -44,8 +44,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
+        // 백그라운드 포그라운드 둘다됨.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            sendNotification("DDDDD");
+
+            // https://github.com/siosio34/AR-Trace/blob/master/app/src/main/java/com/dragon4/owo/ar_trace/FCM/FCMMessagingService.java
+
 
 
            // if (/* Check if data needs to be processed by long running job */ true) {
@@ -56,11 +61,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
            //     handleNow();
            // }
 
+
         }
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            sendNotification("DDDDD");
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -115,4 +122,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
+
+
 }
