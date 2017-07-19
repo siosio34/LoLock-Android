@@ -8,11 +8,15 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class UserInfo extends RealmObject {
-    private static final UserInfo ourInstance = new UserInfo();
+    private static UserInfo ourInstance = new UserInfo();
 
     public static UserInfo getInstance() {
         return ourInstance;
     }
+    public static void setOurInstance(UserInfo userInfo) {
+        ourInstance = userInfo;
+    }
+
 
     @PrimaryKey
     private String registerUserPhoneId;

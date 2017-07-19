@@ -12,12 +12,18 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.gunghi.tgwing.lolock.R;
+import com.gunghi.tgwing.lolock.model.UserInfo;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by InKyung on 2017-07-19.
  */
 
 public class SplashActivity extends Activity {
+
+    private Realm mRealm;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -31,16 +37,33 @@ public class SplashActivity extends Activity {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.parseColor("#FAAC42"));
 
-        //3초후에 화면 자동변환
-        new Handler().postDelayed(new Runnable() {
+        Realm.init(getApplicationContext());
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+        mRealm = Realm.getInstance(realmConfiguration);
+        mRealm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void run() {
-                Intent mainintent=new Intent(SplashActivity.this,MainActivity.class);
-                SplashActivity.this.startActivity(mainintent);
-                SplashActivity.this.finish();
-            }
-        },2000);
+            public void execute(Realm realm) {
+                //UserInfo.getInstance().setRegisterUserPhoneId(token);
+                final UserInfo userInfo = mRealm.where(UserInfo.class).findFirst();
 
+                //2초후에 화면 자동변환
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(userInfo == null) {
+                            Intent registerIntent=new Intent(SplashActivity.this,RegisterActivity.class);
+                            SplashActivity.this.startActivity(registerIntent);
+                            SplashActivity.this.finish();
+                        } else {
+                            UserInfo.setOurInstance(userInfo);
+                            Intent mainIntent=new Intent(SplashActivity.this,MainActivity.class);
+                            SplashActivity.this.startActivity(mainIntent);
+                            SplashActivity.this.finish();
+                        }
+                    }
+                },2000);
+            }
+        });
 
     }
 
@@ -48,7 +71,7 @@ public class SplashActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-
+        mRealm.close();
     }
 
 }

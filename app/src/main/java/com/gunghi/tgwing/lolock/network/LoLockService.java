@@ -37,9 +37,4 @@ public interface LoLockService {
             @Path("LTID") String LTID);
 
 
-
-
-
-
-
 }

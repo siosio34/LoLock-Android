@@ -28,13 +28,12 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         // Get updated InstanceID token.
         final String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-
         Log.d(TAG, "Refreshed token: " + refreshedToken);
-        saveToken(refreshedToken);
+        saveTokenInRealmDB(refreshedToken);
     }
     // [END refresh_token]
 
-    private void saveToken(final String token) {
+    private void saveTokenInRealmDB(final String token) {
         Realm mRealm;
         Realm.init(getApplicationContext());
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
