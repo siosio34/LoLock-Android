@@ -6,9 +6,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.gunghi.tgwing.lolock.model.UserInfo;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-
 /**
  * Created by joyeongje on 2017. 7. 16..
  */
@@ -34,17 +31,18 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     // [END refresh_token]
 
     private void saveTokenInRealmDB(final String token) {
-        Realm mRealm;
-        Realm.init(getApplicationContext());
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
-        mRealm = Realm.getInstance(realmConfiguration);
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                UserInfo.getInstance().setRegisterUserPhoneId(token);
-                realm.copyToRealmOrUpdate(UserInfo.getInstance());
-            }
-        });
-        mRealm.close();
+        UserInfo.getInstance().setRegisterUserPhoneId(token);
+       // Realm mRealm;
+       // Realm.init(getApplicationContext());
+       // RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+       // mRealm = Realm.getInstance(realmConfiguration);
+       // mRealm.executeTransaction(new Realm.Transaction() {
+       //     @Override
+       //     public void execute(Realm realm) {
+       //         UserInfo.getInstance().setRegisterUserPhoneId(token);
+       //         realm.copyToRealmOrUpdate(UserInfo.getInstance());
+       //     }
+       // });
+       // mRealm.close();
     }
 }

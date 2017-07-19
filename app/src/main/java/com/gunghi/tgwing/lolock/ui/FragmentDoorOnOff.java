@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.network.LoLockService;
@@ -59,6 +60,7 @@ public class FragmentDoorOnOff extends Fragment {
 
                 if(response.isSuccessful()) {
                     Log.d(TAG,"door Response Success");
+                    Toast.makeText(getContext(),"문이 열렸습니다.",Toast.LENGTH_SHORT).show();
                     imageButton.setImageResource(R.drawable.ic_door_closed);
                     //3초후에 화면 자동변환
                     new Handler().postDelayed(new Runnable() {
@@ -72,6 +74,7 @@ public class FragmentDoorOnOff extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(),"서버 상태가 불안정합니다.",Toast.LENGTH_SHORT).show();
                 imageButton.setImageResource(R.drawable.ic_door_open);
             }
 

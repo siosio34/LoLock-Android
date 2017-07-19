@@ -50,16 +50,16 @@ public class SplashActivity extends Activity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(userInfo == null) {
-                            Intent registerIntent=new Intent(SplashActivity.this,RegisterActivity.class);
-                            SplashActivity.this.startActivity(registerIntent);
-                            SplashActivity.this.finish();
-                        } else {
-                            UserInfo.setOurInstance(userInfo);
+                       // if(userInfo == null) {
+                       //     Intent registerIntent=new Intent(SplashActivity.this,RegisterActivity.class);
+                       //     SplashActivity.this.startActivity(registerIntent);
+                       //     SplashActivity.this.finish();
+                       // } else {
+                       //     UserInfo.setOurInstance(userInfo);
                             Intent mainIntent=new Intent(SplashActivity.this,MainActivity.class);
                             SplashActivity.this.startActivity(mainIntent);
                             SplashActivity.this.finish();
-                        }
+                       // }
                     }
                 },2000);
             }
