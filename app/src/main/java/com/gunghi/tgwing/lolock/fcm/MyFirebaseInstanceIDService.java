@@ -4,6 +4,10 @@ import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.gunghi.tgwing.lolock.model.UserInfo;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by joyeongje on 2017. 7. 16..
@@ -19,22 +23,29 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
      * is initially generated so this is where you would retrieve the token.
      */
     // [START refresh_token]
+
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        final String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+
         Log.d(TAG, "Refreshed token: " + refreshedToken);
-
-        // TODO: 2017. 7. 16. 서버에서 관리할거면 이 톸큰을 서버로 보내야됨!
-
-        sendRegistrationToServer(refreshedToken);
-
+        saveToken(refreshedToken);
     }
     // [END refresh_token]
 
-    private void sendRegistrationToServer(String token) {
-
-        // TODO: 2017. 7. 16. token을 현재 유저 정보에 넣어줘야됨.
-
+    private void saveToken(final String token) {
+        Realm mRealm;
+        Realm.init(getApplicationContext());
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+        mRealm = Realm.getInstance(realmConfiguration);
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                UserInfo.getInstance().setRegisterUserPhoneId(token);
+                realm.copyToRealmOrUpdate(UserInfo.getInstance());
+            }
+        });
+        mRealm.close();
     }
 }

@@ -1,13 +1,11 @@
 package com.gunghi.tgwing.lolock.ui;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.view.Window;
@@ -20,6 +18,7 @@ import com.gunghi.tgwing.lolock.R;
  */
 
 public class SplashActivity extends Activity {
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,5 +40,15 @@ public class SplashActivity extends Activity {
                 SplashActivity.this.finish();
             }
         },2000);
+
+
     }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
 }

@@ -5,8 +5,9 @@ import com.gunghi.tgwing.lolock.Response.ResponseMate;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
-import retrofit2.http.GET;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 /**
@@ -25,7 +26,13 @@ public interface LoLockService {
             //@Part("registerUserImage") String Re
     );
 
-    @GET("/ThingPlug/homemateslist/{LTID}")
+    @FormUrlEncoded
+    @PUT("/ThingPlug/remote-open")
+    Call<ResponseBody> remoteOnOffLock(
+            @Field("openDeviceId") String openDeviceId
+    );
+
+    @POST("/ThingPlug/homemateslist/{LTID}")
     Call<ResponseMate> getHomeMateResponse(
             @Path("LTID") String LTID);
 
