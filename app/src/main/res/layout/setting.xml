@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<ImageView
+<ImageButton
+    android:id="@+id/BackButton"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginLeft="25.5dp"
@@ -61,12 +62,14 @@
         android:layout_marginLeft="24.4dp"
         android:background="@drawable/setting_login"
         />
-    <TextView
+    <Button
+        android:id="@+id/LoginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="69dp"
         android:layout_marginTop="323dp"
         android:text="자동로그인 on/off"
+        android:background="#00ff0000"
         android:textSize="20sp"
         />
     <ImageView
@@ -90,12 +93,14 @@
         android:layout_marginLeft="22.5dp"
         android:background="@drawable/setting_blcak_short_line"
         />
-    <TextView
+    <Button
+        android:id="@+id/ChangeInfoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="69dp"
         android:layout_marginTop="379dp"
         android:text="동거인 정보수정"
+        android:background="#00ff0000"
         android:textSize="20sp"
         />
     <ImageView
@@ -113,12 +118,14 @@
         android:background="@drawable/setting_blcak_short_line"
         />
 
-    <TextView
+    <Button
+        android:id="@+id/LolockInfoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="69dp"
         android:layout_marginTop="434dp"
         android:text="LOLOCK정보"
+        android:background="#00ff0000"
         android:textSize="20sp"
         />
     <ImageView

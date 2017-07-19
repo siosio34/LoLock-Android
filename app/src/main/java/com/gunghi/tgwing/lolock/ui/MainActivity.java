@@ -26,6 +26,8 @@ import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity  {
     private BottomBar mBottomBar;
     private Fragment currentSelectedFragment;
     private TextView mainTitleTextView;
+    private ImageButton settingButton;
 
     private BluetoothAdapter mBluetoothAdapter;
     private int REQUEST_ENABLE_BT = 1;
@@ -392,6 +395,16 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onMenuTabReSelected(@IdRes int menuItemId) {
 
+            }
+        });
+
+        //setting 버튼 누르면 들어가도록 바꿈
+        settingButton=(ImageButton)findViewById(R.id.mainActivitySettingButton);
+        final Intent intent=new Intent(this, SettingActivity.class);
+        settingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(intent);
             }
         });
     }
