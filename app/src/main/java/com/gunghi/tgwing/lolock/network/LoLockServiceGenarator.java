@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class LoLockServiceGenarator {
-    private static final String BASE_URL = "http://13.124.94.67:10080/ThingPlug/";
+    private static final String BASE_URL = "http://13.124.94.67:10080/";
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()

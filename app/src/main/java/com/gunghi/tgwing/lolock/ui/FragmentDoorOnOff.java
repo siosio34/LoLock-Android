@@ -30,11 +30,13 @@ public class FragmentDoorOnOff extends Fragment {
 
     private boolean openFlag = false;
     ImageButton imageButton;
+    LoLockService loLockService;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_door_on_off, container, false);
+        loLockService = LoLockServiceGenarator.createService(LoLockService.class);
         imageButton = (ImageButton) rootView.findViewById(R.id.fragmentDoorOnOffButton);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,12 +44,11 @@ public class FragmentDoorOnOff extends Fragment {
                openDoor();
             }
         });
+
         return rootView;
     }
 
     private void openDoor() {
-
-        LoLockService loLockService = LoLockServiceGenarator.createService(LoLockService.class);
         //Log.d("user token", UserInfo.getInstance().getRegisterUserPhoneId());
         //Call<ResponseBody> requestOpenDoor = loLockService.remoteOnOffLock(UserInfo.getInstance().getRegisterUserPhoneId());
         String temp = "testPhoneId";
@@ -82,7 +83,24 @@ public class FragmentDoorOnOff extends Fragment {
 
     }
 
-    private void closeDoor() {
+    private void makeOpenDoorCode() {
+        String temp = "testPhoneId";
+
+        Call<ResponseBody> requestOpenDoorCode = loLockService.getDoorOpenCode(temp);
+        requestOpenDoorCode.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()) {
+                    // TODO: 2017. 7. 20. 텍스트뷰처리
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
 
     }
 

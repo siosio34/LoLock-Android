@@ -55,7 +55,7 @@ public class SplashActivity extends Activity {
                        //     SplashActivity.this.startActivity(registerIntent);
                        //     SplashActivity.this.finish();
                        // } else {
-                       //     UserInfo.setOurInstance(userInfo);
+                        //    UserInfo.setOurInstance(userInfo);
                             Intent mainIntent=new Intent(SplashActivity.this,MainActivity.class);
                             SplashActivity.this.startActivity(mainIntent);
                             SplashActivity.this.finish();
