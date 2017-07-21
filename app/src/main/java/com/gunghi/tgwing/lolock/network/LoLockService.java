@@ -19,7 +19,7 @@ import retrofit2.http.Path;
 public interface LoLockService {
 
     // 로라 일련번호 유효성 체크
-    @GET("ThingPlug/checkId/{number}")
+    @GET("/ThingPlug/checkId/{number}")
     Call<ResponseLoLockService> checkLoraNumberId(
             @Path("number") String number);
 

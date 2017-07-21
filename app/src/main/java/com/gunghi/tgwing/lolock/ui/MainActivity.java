@@ -1,6 +1,5 @@
 package com.gunghi.tgwing.lolock.ui;
 
-import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -33,11 +32,6 @@ import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.bluetooth.BluetoothLeService;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.single.PermissionListener;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tsengvn.typekit.TypekitContextWrapper;
@@ -264,20 +258,6 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Dexter.withActivity(this)
-                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                .withListener(new PermissionListener() {
-                    @Override public void onPermissionGranted(PermissionGrantedResponse response) {/* ... */}
-                    @Override public void onPermissionDenied(PermissionDeniedResponse response) {/* ... */}
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(com.karumi.dexter.listener.PermissionRequest permission, PermissionToken token) {
-
-                    }
-
-                }).check();
-
-        initLocationPermission();
         initFragment();
         initView(savedInstanceState);
 
@@ -286,9 +266,6 @@ public class MainActivity extends AppCompatActivity  {
        // mBottomBar = (BottomBar) findViewById(R.id.mainActivityBottomBar);
     }
 
-    private void initLocationPermission() {
-
-    }
 
     @Override
     protected void onResume() {

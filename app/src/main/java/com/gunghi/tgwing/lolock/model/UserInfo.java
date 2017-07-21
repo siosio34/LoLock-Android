@@ -24,8 +24,9 @@ public class UserInfo extends RealmObject {
     private String registerLoraId;
     private String registerUserName;
     private String registerBluetoothId;
-    private String lat;
-    private String lon;
+    private Double lat;
+    private Double lon;
+
 
     public UserInfo() {
 
@@ -63,19 +64,19 @@ public class UserInfo extends RealmObject {
         this.registerBluetoothId = registerBluetoothId;
     }
 
-    public String getLat() {
+    public Double getLat() {
         return lat;
     }
 
-    public void setLat(String lat) {
+    public void setLat(Double lat) {
         this.lat = lat;
     }
 
-    public String getLon() {
+    public Double getLon() {
         return lon;
     }
 
-    public void setLon(String lon) {
+    public void setLon(Double lon) {
         this.lon = lon;
     }
 

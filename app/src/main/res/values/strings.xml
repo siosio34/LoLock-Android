@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">LoLock</string>
     <string name="google_map_key">AIzaSyBQMlcoIX5CM6w7Kt-6wdkz-u4IMQ7zZh4</string>
+    <string name="daum_api_key">04b68611d624a48f5a37bf1ad4324600</string>
 </resources>
