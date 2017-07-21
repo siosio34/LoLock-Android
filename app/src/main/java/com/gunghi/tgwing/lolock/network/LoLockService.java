@@ -37,8 +37,6 @@ public interface LoLockService {
     );
 
 
-
-
     // 로라등록
    // @POST("/ThingPlug/register")
    // Call<ResponseBody> registLoLock(

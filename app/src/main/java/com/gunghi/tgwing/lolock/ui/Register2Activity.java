@@ -62,17 +62,16 @@ public class Register2Activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                     String name = nameEditText.getText().toString();
-                    RegisterUserInfo.getInstance().setName(name);
+                    RegisterUserInfo.getInstance().setRegisterUserName(name);
 
                     String address = addressEditText.getText().toString();
-                    RegisterUserInfo.getInstance().setAddress(address);
-
+                    RegisterUserInfo.getInstance().setRegisterDeviceAddr(address);
 
                     //final String[] deviceId = {RegisterUserInfo.getInstance().getDeviceId()};
 
-
                 LoLockService loLockService = LoLockServiceGenarator.createService(LoLockService.class);
                 Call<ResponseBody> callLoLockService = loLockService.registLoLock(RegisterUserInfo.getInstance());
+                Log.d("callLoLockService",callLoLockService.toString());
                 callLoLockService.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -154,8 +153,8 @@ public class Register2Activity extends AppCompatActivity {
         queryAddress.put("inputCoordSystem","WGS84");
         queryAddress.put("output","json");
 
-        RegisterUserInfo.getInstance().setLat(String.valueOf(lat));
-        RegisterUserInfo.getInstance().setLon(String.valueOf(lon));
+        RegisterUserInfo.getInstance().setRegisterDeviceGPS_lat(String.valueOf(lat));
+        RegisterUserInfo.getInstance().setRegisterDeviceGPS_lon(String.valueOf(lon));
 
 
         DaumService daumService = DaumServiceGenerator.createService(DaumService.class);

@@ -68,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
                         Intent intent = new Intent(RegisterActivity.this,Register2Activity.class);
                         startActivity(intent);
                         RegisterActivity.this.finish();
-                        RegisterUserInfo.getInstance().setLoraId(number);
+                        RegisterUserInfo.getInstance().setRegisterDeviceId(number);
 
                     } else {
                         Toast.makeText(getApplicationContext(),

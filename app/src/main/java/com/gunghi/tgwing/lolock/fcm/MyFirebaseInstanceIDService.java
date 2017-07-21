@@ -32,7 +32,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     // [END refresh_token]
 
     private void saveTokenInRealmDB(final String token) {
-        RegisterUserInfo.getInstance().setDeviceId(token);
+        RegisterUserInfo.getInstance().setRegisterUserPhoneId(token);
         SharedPreferences lolockLocalData = getSharedPreferences("lolockLocalData", MODE_PRIVATE);
         SharedPreferences.Editor editor = lolockLocalData.edit();
         editor.putString("deviceId", token); //First라는 key값으로 infoFirst 데이터를 저장한다.
