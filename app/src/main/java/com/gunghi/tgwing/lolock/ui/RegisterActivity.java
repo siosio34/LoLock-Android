@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.Response.ResponseLoLockService;
-import com.gunghi.tgwing.lolock.model.UserInfo;
+import com.gunghi.tgwing.lolock.model.RegisterUserInfo;
 import com.gunghi.tgwing.lolock.network.LoLockService;
 import com.gunghi.tgwing.lolock.network.LoLockServiceGenarator;
 import com.tsengvn.typekit.TypekitContextWrapper;
@@ -68,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
                         Intent intent = new Intent(RegisterActivity.this,Register2Activity.class);
                         startActivity(intent);
                         RegisterActivity.this.finish();
-                        UserInfo.getInstance().setRegisterLoraId(number);
+                        RegisterUserInfo.getInstance().setLoraId(number);
 
                     } else {
                         Toast.makeText(getApplicationContext(),

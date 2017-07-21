@@ -2,9 +2,12 @@ package com.gunghi.tgwing.lolock.network;
 
 import com.gunghi.tgwing.lolock.Response.ResponseLoLockService;
 import com.gunghi.tgwing.lolock.Response.ResponseMate;
+import com.gunghi.tgwing.lolock.Response.ResponseUserInfo;
+import com.gunghi.tgwing.lolock.model.RegisterUserInfo;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -23,16 +26,29 @@ public interface LoLockService {
     Call<ResponseLoLockService> checkLoraNumberId(
             @Path("number") String number);
 
-    // 로라등록
     @POST("/ThingPlug/register")
     Call<ResponseBody> registLoLock(
-            @Field("registerDeviceId") String registerDeviceId,
-            @Field("registerUserName") String registerUserName,
-            @Field("registerUserPhoneId") String registerUserPhoneId,
-            @Field("registerUserBluetoothId") String registerUserBluetoothId,
-            @Field("registerUserGPS") String registerUserGPS
-            //@Part("registerUserImage") String Re
+        @Body RegisterUserInfo registerUserInfo);
+
+    // 디바이스 아이디로 기존정보 조회
+    @GET("/ThingPlug/userInfo/{phoneId}")
+    Call<ResponseUserInfo> getUserInfo(
+            @Path("phoneId") String phoneId
     );
+
+
+
+
+    // 로라등록
+   // @POST("/ThingPlug/register")
+   // Call<ResponseBody> registLoLock(
+   //         @Field("registerDeviceId") String registerDeviceId,
+   //         @Field("registerUserName") String registerUserName,
+   //         @Field("registerUserPhoneId") String registerUserPhoneId,
+   //         @Field("registerDeviceGPS_lat") String registerDeviceGPS_lat,
+   //         @Field("registerDeviceGPS_lon") String registerDeviceGPS_lon,
+   //         @Field("registerDeviceAddr") String registerDeviceAddr
+   // );
 
     // 원격 문열림
     @FormUrlEncoded

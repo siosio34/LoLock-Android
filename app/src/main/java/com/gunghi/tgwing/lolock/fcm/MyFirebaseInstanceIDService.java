@@ -1,10 +1,11 @@
 package com.gunghi.tgwing.lolock.fcm;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.gunghi.tgwing.lolock.model.UserInfo;
+import com.gunghi.tgwing.lolock.model.RegisterUserInfo;
 
 /**
  * Created by joyeongje on 2017. 7. 16..
@@ -31,18 +32,12 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     // [END refresh_token]
 
     private void saveTokenInRealmDB(final String token) {
-        UserInfo.getInstance().setRegisterUserPhoneId(token);
-       // Realm mRealm;
-       // Realm.init(getApplicationContext());
-       // RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
-       // mRealm = Realm.getInstance(realmConfiguration);
-       // mRealm.executeTransaction(new Realm.Transaction() {
-       //     @Override
-       //     public void execute(Realm realm) {
-       //         UserInfo.getInstance().setRegisterUserPhoneId(token);
-       //         realm.copyToRealmOrUpdate(UserInfo.getInstance());
-       //     }
-       // });
-       // mRealm.close();
+        RegisterUserInfo.getInstance().setDeviceId(token);
+        SharedPreferences lolockLocalData = getSharedPreferences("lolockLocalData", MODE_PRIVATE);
+        SharedPreferences.Editor editor = lolockLocalData.edit();
+        editor.putString("deviceId", token); //First라는 key값으로 infoFirst 데이터를 저장한다.
+        editor.apply(); //완료한다.
+        Log.d("토큰 저장","됨");
+
     }
 }

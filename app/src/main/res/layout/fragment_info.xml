@@ -20,8 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:text="날씨℃"
-
+        android:text="날씨"
         app:layout_constraintTop_toTopOf="@+id/fragmentInfoWeatherMiniIcon"
         app:layout_constraintBottom_toBottomOf="@+id/fragmentInfoWeatherMiniIcon"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -66,6 +65,7 @@
         />
 
     <TextView
+        android:id="@+id/fragmentInfoCloudAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="흐림"
@@ -78,6 +78,7 @@
         />
 
     <TextView
+        android:id="@+id/fragmentInfoRainPercent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="강수확률 : 10%"
@@ -88,6 +89,38 @@
         android:layout_marginTop="65dp"
         android:layout_marginStart="90dp"
         />
+
+    <TextView
+        android:id="@+id/fragmentInfoCurrentTemparature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FC6928"
+        android:textSize="40dp"
+        android:textStyle="bold"
+        android:text= "21℃"
+        app:layout_constraintTop_toTopOf="@+id/fragmentInfoWeatherView"
+        app:layout_constraintRight_toRightOf="@+id/fragmentInfoWeatherView"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="17dp"
+        />
+
+    <TextView
+        android:id="@+id/fragmentInfoCurrentMaxMinTemparature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="11℃ / 22℃"
+        android:textSize="14sp"
+        android:textColor="#95989A"
+        app:layout_constraintTop_toTopOf="@+id/fragmentInfoWeatherView"
+        app:layout_constraintRight_toRightOf="@+id/fragmentInfoWeatherView"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="22dp"
+        />
+
+
+    
+
+
 
 
 

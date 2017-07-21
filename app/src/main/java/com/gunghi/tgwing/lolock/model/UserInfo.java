@@ -1,83 +1,60 @@
 package com.gunghi.tgwing.lolock.model;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by joyeongje on 2017. 7. 19..
  */
 
-public class UserInfo extends RealmObject {
-    private static UserInfo ourInstance = new UserInfo();
+public class UserInfo {
 
+    private static final UserInfo ourInstance = new UserInfo();
     public static UserInfo getInstance() {
         return ourInstance;
     }
-    public static void setOurInstance(UserInfo userInfo) {
-        ourInstance = userInfo;
-    }
 
 
-    @PrimaryKey
-    private String registerUserPhoneId;
+    @SerializedName("name")
+    @Expose
+    private String name;
+    @SerializedName("lolockLTID")
+    @Expose
+    private String lolockLTID;
 
-    private String registerLoraId;
-    private String registerUserName;
-    private String registerBluetoothId;
-    private Double lat;
-    private Double lon;
-
-
+    /**
+     * No args constructor for use in serialization
+     *
+     */
     public UserInfo() {
 
     }
 
-    public String getRegisterLoraId() {
-        return registerLoraId;
+    /**
+     *
+     * @param name
+     * @param lolockLTID
+     */
+    public UserInfo(String name, String lolockLTID) {
+        super();
+        this.name = name;
+        this.lolockLTID = lolockLTID;
     }
 
-    public void setRegisterLoraId(String registerLoraId) {
-        this.registerLoraId = registerLoraId;
+    public String getName() {
+        return name;
     }
 
-    public String getRegisterUserName() {
-        return registerUserName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setRegisterUserName(String registerUserName) {
-        this.registerUserName = registerUserName;
+    public String getLolockLTID() {
+        return lolockLTID;
     }
 
-    public String getRegisterUserPhoneId() {
-        return registerUserPhoneId;
-    }
-
-    public void setRegisterUserPhoneId(String registerUserPhoneId) {
-        this.registerUserPhoneId = registerUserPhoneId;
-    }
-
-    public String getRegisterBluetoothId() {
-        return registerBluetoothId;
-    }
-
-    public void setRegisterBluetoothId(String registerBluetoothId) {
-        this.registerBluetoothId = registerBluetoothId;
-    }
-
-    public Double getLat() {
-        return lat;
-    }
-
-    public void setLat(Double lat) {
-        this.lat = lat;
-    }
-
-    public Double getLon() {
-        return lon;
-    }
-
-    public void setLon(Double lon) {
-        this.lon = lon;
+    public void setLolockLTID(String lolockLTID) {
+        this.lolockLTID = lolockLTID;
     }
 
 }

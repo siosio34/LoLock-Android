@@ -14,13 +14,17 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.Response.ResponseDaumAddressAPI;
+import com.gunghi.tgwing.lolock.model.RegisterUserInfo;
 import com.gunghi.tgwing.lolock.network.DaumService;
 import com.gunghi.tgwing.lolock.network.DaumServiceGenerator;
+import com.gunghi.tgwing.lolock.network.LoLockService;
+import com.gunghi.tgwing.lolock.network.LoLockServiceGenarator;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -31,6 +35,7 @@ import com.tsengvn.typekit.TypekitContextWrapper;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,6 +45,8 @@ public class Register2Activity extends AppCompatActivity {
     EditText nameEditText;
     EditText addressEditText;
     private LocationManager locationManager;
+    Button button;
+
 
 
     @Override
@@ -50,14 +57,42 @@ public class Register2Activity extends AppCompatActivity {
         nameEditText = (EditText) findViewById(R.id.editTextName);
         addressEditText = (EditText) findViewById(R.id.editTextAddress);
 
-        // TODO: 2017. 7. 21. GPS 를 켜야되나 ...?
+        button = (Button) findViewById(R.id.register2ActivityButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    String name = nameEditText.getText().toString();
+                    RegisterUserInfo.getInstance().setName(name);
 
+                    String address = addressEditText.getText().toString();
+                    RegisterUserInfo.getInstance().setAddress(address);
+
+
+                    //final String[] deviceId = {RegisterUserInfo.getInstance().getDeviceId()};
+
+
+                LoLockService loLockService = LoLockServiceGenarator.createService(LoLockService.class);
+                Call<ResponseBody> callLoLockService = loLockService.registLoLock(RegisterUserInfo.getInstance());
+                callLoLockService.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Log.d("response" ,response.toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d("response" ,call.toString());
+                    }
+                });
+
+                }
+        });
+
+        getLocationInfo();
     }
 
     private LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
-            // Called when a new location is found by the network location provider.
-            // TODO: 2017. 7. 21. 경도위도정보사용하긔
             getAddressWithMyCoord(location.getLatitude(),location.getLongitude());
         }
 
@@ -97,13 +132,13 @@ public class Register2Activity extends AppCompatActivity {
             if(lastKnownLocation == null) {
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, locationListener);
             } else {
-                // TODO: 2017. 7. 21. 위치정보활용해서 주소정보 들고오기.(위치정보가있음.)
-            }
+                Log.d("나의 위치",String.valueOf(lastKnownLocation.getLatitude() +"," + lastKnownLocation.getLongitude()));
+                getAddressWithMyCoord(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude());
 
+            }
         } else {
-            Toast.makeText(getApplicationContext(),"네트워크 연결을 확인해주세요",Toast.LENGTH_SHORT).show();
             onNetworkSetting();
-            //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, locationListener);
             //// 아니면 네트워크 사용여부를 토스트로 띄우던지 해야겠다..
             //// TODO: 2017. 7. 21. 로직처리.
 
@@ -118,6 +153,9 @@ public class Register2Activity extends AppCompatActivity {
         queryAddress.put("longitude", String.valueOf(lon));
         queryAddress.put("inputCoordSystem","WGS84");
         queryAddress.put("output","json");
+
+        RegisterUserInfo.getInstance().setLat(String.valueOf(lat));
+        RegisterUserInfo.getInstance().setLon(String.valueOf(lon));
 
 
         DaumService daumService = DaumServiceGenerator.createService(DaumService.class);
@@ -141,26 +179,29 @@ public class Register2Activity extends AppCompatActivity {
 
     private void onNetworkSetting(){
 
-            //show dialog to allow user to enable location settings
-            AlertDialog.Builder dialog = new AlertDialog.Builder(getApplicationContext());
-            dialog.setTitle(" NETWORK 설정 ");
-            dialog.setMessage(" NETWORK를 활성화 시켜주세요.");
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("GPS 사용유무셋팅");
+        alertDialog.setMessage("GPS 셋팅이 되지 않았을수도 있습니다.\n설정창으로 가시겠습니까?");
+                // OK 를 누르게 되면 설정창으로 이동합니다.
+                alertDialog.setPositiveButton("Settings",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int which) {
+                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                startActivity(intent);
+                            }
+                        });
+        // Cancle 하면 종료 합니다.
+        alertDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
 
-            dialog.setPositiveButton("설정", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    startActivityForResult(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS), 0);
-                    // startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
-                }
-            });
+        alertDialog.show();
 
-            dialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface dialog, int which) {
-                    //nothing to do
-                }
-            });
-            dialog.show();
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -179,7 +220,5 @@ public class Register2Activity extends AppCompatActivity {
         super.onPause();
 
     }
-
-
 
 }
