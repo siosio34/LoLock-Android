@@ -58,7 +58,7 @@ public class Register2Activity extends AppCompatActivity {
         public void onLocationChanged(Location location) {
             // Called when a new location is found by the network location provider.
             // TODO: 2017. 7. 21. 경도위도정보사용하긔
-            getAddressWithMyCoord(location.getLatitude(),location.getLongitude())
+            getAddressWithMyCoord(location.getLatitude(),location.getLongitude());
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras) {}
