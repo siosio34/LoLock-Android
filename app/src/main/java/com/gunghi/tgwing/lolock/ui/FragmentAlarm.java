@@ -18,7 +18,7 @@ public class FragmentAlarm extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_door_on_off, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_alarm, container, false);
         return rootView;
     }
 

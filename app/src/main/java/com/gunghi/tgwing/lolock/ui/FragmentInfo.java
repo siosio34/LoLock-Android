@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.network.LoLockService;
+import com.gunghi.tgwing.lolock.network.LoLockServiceGenarator;
 
 /**
  * Created by joyeongje on 2017. 7. 20..
@@ -21,12 +22,16 @@ public class FragmentInfo extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_door_on_off, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_info, container, false);
+        loLockService = LoLockServiceGenarator.createService(LoLockService.class);
+
         getWeartherInfo();
+        getSchedule();
         return rootView;
     }
 
     private void getWeartherInfo() {
+
         // TODO: 2017. 7. 20. 날씨정보
     }
 

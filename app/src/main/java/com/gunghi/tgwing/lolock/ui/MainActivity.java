@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity  {
 
     FragmentDoorOnOff fragmentDoorOnOff;
     FragmentMate      fragmentMate     ;
+    FragmentInfo fragmentInfo;
+    FragmentAlarm fragmentAlarm;
 
     // TODO: 2017-07-02 연결이 되었을때 끊어야함.
     private boolean mScanning;
@@ -297,7 +299,7 @@ public class MainActivity extends AppCompatActivity  {
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         // TODO: 2017-07-02  블루투스 자동 연결 하는거 해야됨.
 
-        //if (mBluetoothLeService != null) {
+        //if (mBluetoothLeService != null) {x
         //    final boolean result = mBluetoothLeService.connect(mDeviceAddress);
         //    Log.d(TAG, "Connect request result=" + result);
         //}
@@ -383,9 +385,11 @@ public class MainActivity extends AppCompatActivity  {
                         mainTitleTextView.setText("가족 현황");
                         break;
                     case R.id.menu_info:
+                        currentSelectedFragment = fragmentInfo;
                         mainTitleTextView.setText("날씨 및 일정");
                         break;
                     case R.id.menu_alarm:
+                        currentSelectedFragment = fragmentAlarm;
                         mainTitleTextView.setText("출입기록");
                         break;
                 }
@@ -412,6 +416,8 @@ public class MainActivity extends AppCompatActivity  {
     private void initFragment() {
         fragmentDoorOnOff = new FragmentDoorOnOff();
         fragmentMate      = new FragmentMate();
+        fragmentInfo = new FragmentInfo();
+        fragmentAlarm = new FragmentAlarm();
 
         currentSelectedFragment = fragmentDoorOnOff;
     }

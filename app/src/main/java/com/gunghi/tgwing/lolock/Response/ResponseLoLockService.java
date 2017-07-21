@@ -21,6 +21,7 @@ public class ResponseLoLockService {
      *
      */
     public ResponseLoLockService() {
+
     }
 
     /**

@@ -37,12 +37,15 @@ public class FragmentMate extends Fragment {
     private ArrayList<Mate> mates;
     private MateAdapter mateAdapter;
     private final String TAG = "FragmentMate";
+    private TextView mateNumberTextView;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_mate, container, false);
+        mateNumberTextView = (TextView)rootView.findViewById(R.id.mateNumberTextView);
+
         RecyclerView mateRecyclerView = (RecyclerView) rootView.findViewById(R.id.fragmentFamiliyRecyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mateRecyclerView.setLayoutManager(mLayoutManager);
@@ -73,12 +76,14 @@ public class FragmentMate extends Fragment {
             public void onResponse(Call<ResponseMate> call, Response<ResponseMate> response) {
                 Log.d(TAG,"Response" + response.toString());
 
-
                 if(response.isSuccessful()) {
                     Log.d(TAG,"RoomMateList Response Success");
                     for (Mate mate : response.body().getMates()) {
                         mates.add(mate);
                     }
+                    if(response.body().getMateNumber() != null) {
+                        mateNumberTextView.setText("가족(" + response.body().getMateNumber() + ")" );
+                    };
                     mateAdapter.notifyDataSetChanged();
                 }
 
