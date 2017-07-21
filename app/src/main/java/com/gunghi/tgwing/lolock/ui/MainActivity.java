@@ -376,11 +376,11 @@ public class MainActivity extends AppCompatActivity  {
                 switch (menuItemId) {
                     case R.id.menu_home:
                         currentSelectedFragment = fragmentDoorOnOff;
-                        mainTitleTextView.setText("출입문 Open/Closed");
+                        mainTitleTextView.setText("출입문 조작");
                         break;
                     case R.id.menu_family:
                         currentSelectedFragment = fragmentMate;
-                        mainTitleTextView.setText("동거인 현황");
+                        mainTitleTextView.setText("가족 현황");
                         break;
                     case R.id.menu_info:
                         mainTitleTextView.setText("날씨 및 일정");
