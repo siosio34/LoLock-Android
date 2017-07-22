@@ -49,6 +49,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             sendNotification("DDDDD");
 
+
+
+
+            // TODO: 2017. 7. 22. 푸쉬메시지 코드에따라 푸쉬알람 띄어주기.! 
             // https://github.com/siosio34/AR-Trace/blob/master/app/src/main/java/com/dragon4/owo/ar_trace/FCM/FCMMessagingService.java
 
 

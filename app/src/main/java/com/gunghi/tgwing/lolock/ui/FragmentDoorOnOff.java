@@ -83,25 +83,6 @@ public class FragmentDoorOnOff extends Fragment {
 
     }
 
-    private void makeOpenDoorCode() {
-        String temp = "testPhoneId";
 
-        Call<ResponseBody> requestOpenDoorCode = loLockService.getDoorOpenCode(temp);
-        requestOpenDoorCode.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.isSuccessful()) {
-                    // TODO: 2017. 7. 20. 텍스트뷰처리
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
-
-    }
 
 }

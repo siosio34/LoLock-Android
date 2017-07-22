@@ -11,6 +11,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.Response.ResponseUserInfo;
@@ -55,7 +56,7 @@ public class SplashActivity extends Activity {
 
     }
 
-    private void getUserInfo(String deviceId) {
+    private void getUserInfo(final String deviceId) {
         LoLockService lolockservice = LoLockServiceGenarator.createService(LoLockService.class);
         Call<ResponseUserInfo> responseUserInfo = lolockservice.getUserInfo(deviceId);
         responseUserInfo.enqueue(new Callback<ResponseUserInfo>() {
@@ -66,7 +67,8 @@ public class SplashActivity extends Activity {
                     if (response.body().getCode().equals("REGISTRED")) {
                         UserInfo tempUserInfo = response.body().getUserInfo();
                         UserInfo.getInstance().setName(tempUserInfo.getName());
-                        UserInfo.getInstance().setName(tempUserInfo.getLolockLTID());
+                        UserInfo.getInstance().setLolockLTID(tempUserInfo.getLolockLTID());
+                        UserInfo.getInstance().setDevideId(deviceId);
                         Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
                         SplashActivity.this.startActivity(mainIntent);
                         SplashActivity.this.finish();
@@ -80,7 +82,7 @@ public class SplashActivity extends Activity {
 
             @Override
             public void onFailure(Call<ResponseUserInfo> call, Throwable t) {
-
+                Toast.makeText(getApplicationContext(),"서버가 응답하지 않습니다.",Toast.LENGTH_SHORT).show();
             }
         });
     }

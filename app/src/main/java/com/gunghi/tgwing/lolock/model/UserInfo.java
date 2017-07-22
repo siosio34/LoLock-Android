@@ -22,6 +22,8 @@ public class UserInfo {
     @Expose
     private String lolockLTID;
 
+    private String devideId;
+
     /**
      * No args constructor for use in serialization
      *
@@ -57,4 +59,11 @@ public class UserInfo {
         this.lolockLTID = lolockLTID;
     }
 
+    public String getDevideId() {
+        return devideId;
+    }
+
+    public void setDevideId(String devideId) {
+        this.devideId = devideId;
+    }
 }
