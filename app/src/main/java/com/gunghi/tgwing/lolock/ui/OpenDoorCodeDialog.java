@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -60,7 +61,11 @@ public class OpenDoorCodeDialog extends Dialog {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ddd2","Dddd");
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.putExtra("sms_body",textView.getText().toString());
+                intent.setType("vnd.android-dir/mms-sms");
+                getContext().startActivity(intent);
+
             }
         });
 
