@@ -7,7 +7,7 @@
     android:id="@+id/BackButton"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="25.5dp"
+    android:layout_marginLeft="25.5dp"https://github.com/siosio34/LoLock-Android/pulls
     android:layout_marginTop="20.5dp"
     android:background="@drawable/setting_back"
     />
@@ -27,52 +27,62 @@
         android:background="@drawable/setting_long_line"
         />
     <ImageView
+        android:id="@+id/settingpeople"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="132dp"
-        android:layout_marginLeft="125dp"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/setting_people"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="153dp"
-        android:layout_marginTop="255dp"
+        android:layout_below="@+id/settingpeople"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
         android:id="@+id/name"
+        android:text="김지윤"
         android:textSize="20sp"
         />
 
     <ImageView
+        android:id="@+id/settingshortline1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="310.5dp"
-        android:layout_marginLeft="22.5dp"
+        android:layout_marginLeft="20dp"
         android:background="@drawable/setting_short_line"
         />
+
     <ImageView
+        android:id="@+id/setting_login2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="326dp"
+        android:layout_below="@+id/settingshortline1"
+
+        android:layout_marginTop="15.5dp"
         android:layout_marginLeft="26.4dp"
         android:background="@drawable/setting_login2"
         />
     <ImageView
+        android:id="@+id/setting_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="335.8dp"
-        android:layout_marginLeft="24.4dp"
+        android:layout_alignLeft="@+id/settingshortline1"
+        android:layout_below="@+id/setting_login2"
         android:background="@drawable/setting_login"
         />
     <Button
-        android:id="@+id/LoginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="69dp"
-        android:layout_marginTop="323dp"
+        android:layout_marginLeft="70dp"
+        android:layout_below="@+id/settingshortline1"
+        android:layout_alignBottom="@+id/settingshortline2"
         android:text="자동 문열림 on/off"
         android:background="#00ff0000"
         android:textSize="20sp"
         />
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -80,6 +90,7 @@
         android:layout_marginLeft="22.2dp"
         android:background="@drawable/setting_info"
         />
+
 
     <Switch
         android:layout_width="wrap_content"
@@ -89,53 +100,101 @@
         />
 
     <ImageView
+        android:id="@+id/settingshortline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="365.5dp"
-        android:layout_marginLeft="22.5dp"
+        android:layout_marginLeft="20dp"
         android:background="@drawable/setting_blcak_short_line"
+        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settingshortline2"
+        android:layout_marginTop="15.5dp"
+        android:layout_alignLeft="@+id/settingshortline2"
+        android:background="@drawable/setting_info"
         />
     <Button
         android:id="@+id/ChangeInfoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="69dp"
-        android:layout_marginTop="379dp"
+        android:layout_marginLeft="70dp"
+        android:layout_below="@+id/settingshortline2"
+        android:layout_alignBottom="@+id/settingshortline3"
         android:text="동거인 정보수정"
         android:background="#00ff0000"
         android:textSize="20sp"
         />
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="436dp"
-        android:layout_marginLeft="19.7dp"
-        android:background="@drawable/setting_pencil"
-        />
+
+
 
     <ImageView
+        android:id="@+id/settingshortline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="420.5dp"
-        android:layout_marginLeft="22.5dp"
+        android:layout_marginLeft="20dp"
         android:background="@drawable/setting_blcak_short_line"
         />
 
+    <ImageView
+        android:id="@+id/pencil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settingshortline3"
+        android:layout_marginTop="15.5dp"
+        android:layout_alignLeft="@+id/settingshortline3"
+        android:background="@drawable/setting_pencil"
+        />
     <Button
         android:id="@+id/LolockInfoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="69dp"
-        android:layout_marginTop="434dp"
+        android:layout_marginLeft="70dp"
+        android:layout_below="@+id/settingshortline3"
+        android:layout_alignBottom="@+id/settingshortline4"
         android:text="LOLOCK정보"
         android:background="#00ff0000"
         android:textSize="20sp"
         />
+
+
     <ImageView
+        android:id="@+id/settingshortline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="470.5dp"
-        android:layout_marginLeft="22.5dp"
+        android:layout_marginLeft="20dp"
         android:background="@drawable/setting_blcak_short_line"
         />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settingshortline4"
+        android:layout_marginTop="15.5dp"
+        android:layout_alignLeft="@+id/settingshortline4"
+        android:background="@drawable/setting_gps"
+        />
+    <Button
+        android:id="@+id/ChangeGps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="70dp"
+        android:layout_below="@+id/settingshortline4"
+        android:layout_alignBottom="@+id/settingshortline5"
+        android:background="#00ff0000"
+        android:text="LOLOCK 위치 수정"
+        android:textSize="20sp"
+        />
+
+    <ImageView
+        android:id="@+id/settingshortline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="529dp"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/setting_blcak_short_line"
+        />
+
 </RelativeLayout>
