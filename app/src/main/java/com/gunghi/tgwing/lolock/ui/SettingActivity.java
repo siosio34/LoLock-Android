@@ -15,7 +15,7 @@ import com.gunghi.tgwing.lolock.R;
 
 public class SettingActivity extends Activity {
     ImageButton backButton;
-    Button lolockInfoButton,changeInfoButton,loginButton;
+    Button lolockInfoButton,changeInfoButton,changeGps;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,9 +32,10 @@ public class SettingActivity extends Activity {
                 finish();
             }
         });
-        lolockInfoButton=(Button)findViewById(R.id.LolockInfoButton);
+
+        //3가지 버튼
         changeInfoButton=(Button)findViewById(R.id.ChangeInfoButton);
-        loginButton=(Button)findViewById(R.id.LoginButton);
-        
+        lolockInfoButton=(Button)findViewById(R.id.LolockInfoButton);
+        changeGps=(Button)findViewById(R.id.ChangeGps);
     }
 }
