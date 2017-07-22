@@ -7,7 +7,7 @@
     android:id="@+id/BackButton"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="25.5dp"https://github.com/siosio34/LoLock-Android/pulls
+    android:layout_marginLeft="25.5dp"
     android:layout_marginTop="20.5dp"
     android:background="@drawable/setting_back"
     />
@@ -81,14 +81,6 @@
         android:text="자동 문열림 on/off"
         android:background="#00ff0000"
         android:textSize="20sp"
-        />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="381dp"
-        android:layout_marginLeft="22.2dp"
-        android:background="@drawable/setting_info"
         />
 
 

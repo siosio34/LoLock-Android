@@ -39,7 +39,6 @@ public class SettingActivity extends Activity {
         changeInfoButton=(Button)findViewById(R.id.ChangeInfoButton);
         lolockInfoButton=(Button)findViewById(R.id.LolockInfoButton);
         changeGps=(Button)findViewById(R.id.ChangeGps);
-        loginButton=(Button)findViewById(R.id.LoginButton);
     }
 
     @Override
