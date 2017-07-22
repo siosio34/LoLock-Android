@@ -10,8 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gunghi.tgwing.lolock.R;
+import com.gunghi.tgwing.lolock.Response.ResponseWeather;
 import com.gunghi.tgwing.lolock.network.LoLockService;
 import com.gunghi.tgwing.lolock.network.LoLockServiceGenarator;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by joyeongje on 2017. 7. 20..
@@ -50,10 +55,25 @@ public class FragmentInfo extends Fragment {
         cloudAmounTextView = (TextView)viewGroup.findViewById(R.id.fragmentInfoCloudAmount);
     }
 
+    private void weatherDataMappingUI() {
+
+
+    }
+
     private void getWeartherInfo() {
+        String loLockKey = "";
+        Call<ResponseWeather> responseWeatherCall = loLockService.getWeatherData(loLockKey);
+        responseWeatherCall.enqueue(new Callback<ResponseWeather>() {
+            @Override
+            public void onResponse(Call<ResponseWeather> call, Response<ResponseWeather> response) {
+                weatherDataMappingUI();
+            }
 
-        // TODO: 2017. 7. 20. 날씨정보
+            @Override
+            public void onFailure(Call<ResponseWeather> call, Throwable t) {
 
+            }
+        });
 
     }
 

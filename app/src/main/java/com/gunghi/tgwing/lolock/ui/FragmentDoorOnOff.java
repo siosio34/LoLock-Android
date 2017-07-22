@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
+import com.gunghi.tgwing.lolock.model.UserInfo;
 import com.gunghi.tgwing.lolock.network.LoLockService;
 import com.gunghi.tgwing.lolock.network.LoLockServiceGenarator;
 
@@ -30,6 +31,7 @@ public class FragmentDoorOnOff extends Fragment {
 
     private boolean openFlag = false;
     ImageButton imageButton;
+    ImageButton doorKeycodeButton;
     LoLockService loLockService;
 
     @Nullable
@@ -45,14 +47,23 @@ public class FragmentDoorOnOff extends Fragment {
             }
         });
 
+        doorKeycodeButton = (ImageButton) rootView.findViewById(R.id.fragmentDoorCodeKeyButton);
+        doorKeycodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final OpenDoorCodeDialog openDoorCodeDialog =
+                        new OpenDoorCodeDialog(getActivity());
+
+                openDoorCodeDialog.show();
+            }
+        });
         return rootView;
     }
 
     private void openDoor() {
         //Log.d("user token", UserInfo.getInstance().getRegisterUserPhoneId());
         //Call<ResponseBody> requestOpenDoor = loLockService.remoteOnOffLock(UserInfo.getInstance().getRegisterUserPhoneId());
-        String temp = "testPhoneId";
-        Call<ResponseBody> requestOpenDoor = loLockService.remoteOnOffLock(temp);
+        Call<ResponseBody> requestOpenDoor = loLockService.remoteOnOffLock(UserInfo.getInstance().getDevideId());
         requestOpenDoor.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -60,6 +71,7 @@ public class FragmentDoorOnOff extends Fragment {
                 Log.d(TAG,"Response" + response.toString());
 
                 if(response.isSuccessful()) {
+                    // TODO: 2017. 7. 22. 더해야됨
                     Log.d(TAG,"door Response Success");
                     Toast.makeText(getContext(),"문이 열렸습니다.",Toast.LENGTH_SHORT).show();
                     imageButton.setImageResource(R.drawable.ic_door_closed);

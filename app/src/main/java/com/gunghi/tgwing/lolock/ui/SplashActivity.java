@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.Response.ResponseUserInfo;
+import com.gunghi.tgwing.lolock.model.RegisterUserInfo;
 import com.gunghi.tgwing.lolock.model.UserInfo;
 import com.gunghi.tgwing.lolock.network.LoLockService;
 import com.gunghi.tgwing.lolock.network.LoLockServiceGenarator;
@@ -57,6 +58,7 @@ public class SplashActivity extends Activity {
     }
 
     private void getUserInfo(final String deviceId) {
+        RegisterUserInfo.getInstance().setRegisterUserPhoneId(deviceId);
         LoLockService lolockservice = LoLockServiceGenarator.createService(LoLockService.class);
         Call<ResponseUserInfo> responseUserInfo = lolockservice.getUserInfo(deviceId);
         responseUserInfo.enqueue(new Callback<ResponseUserInfo>() {
@@ -69,6 +71,7 @@ public class SplashActivity extends Activity {
                         UserInfo.getInstance().setName(tempUserInfo.getName());
                         UserInfo.getInstance().setLolockLTID(tempUserInfo.getLolockLTID());
                         UserInfo.getInstance().setDevideId(deviceId);
+
                         Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
                         SplashActivity.this.startActivity(mainIntent);
                         SplashActivity.this.finish();

@@ -23,9 +23,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.google.code.findbugs'
     })
-
-
 
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
@@ -41,6 +40,17 @@ dependencies {
     compile 'com.google.firebase:firebase-core:10.0.1'
     compile 'com.google.firebase:firebase-messaging:10.0.1'
     compile 'com.firebase:firebase-jobdispatcher:0.6.0'
+
+    compile 'com.google.android.gms:play-services-auth:10.0.1'
+    compile 'pub.devrel:easypermissions:0.2.1'
+    compile('com.google.api-client:google-api-client-android:1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    compile('com.google.apis:google-api-services-calendar:v3-rev250-1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+
+
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -19,7 +19,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="임시 비밀번호"
+        android:text="일회용 키 발급"
         android:textSize="18sp"
         android:textColor="#FC7336"
         app:layout_constraintTop_toTopOf="@+id/dialog_open_code_view"
@@ -35,10 +35,12 @@
         app:layout_constraintTop_toTopOf="@+id/dialog_open_code_view"
         app:layout_constraintRight_toRightOf="@+id/dialog_open_code_view"
         app:layout_constraintLeft_toLeftOf="@+id/dialog_open_code_view"
-        android:layout_marginTop="68dp"
-        android:textSize="20sp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginTop="50dp"
+        android:textSize="16sp"
         android:textColor="#4D5051"
-        android:text="1234 5678 9123 4567 8910 1112"
+        android:text="새로운 링크를 받아오고 있습니다."
         />
     
     <View
@@ -75,7 +77,7 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginBottom="0dp"
-        android:background="#FFFFFF"
+        android:background="@null"
         android:text="복사하기"
         android:textSize="20sp"
         android:textColor="#FC7336"/>
@@ -92,7 +94,7 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginBottom="0dp"
-        android:background="#FFFFFF"
+        android:background="@null"
         android:text="보내기"
         android:textSize="20sp"
         android:textColor="#FC7336"/>

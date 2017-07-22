@@ -2,7 +2,9 @@ package com.gunghi.tgwing.lolock.network;
 
 import com.gunghi.tgwing.lolock.Response.ResponseLoLockService;
 import com.gunghi.tgwing.lolock.Response.ResponseMate;
+import com.gunghi.tgwing.lolock.Response.ResponseOpenDoorKey;
 import com.gunghi.tgwing.lolock.Response.ResponseUserInfo;
+import com.gunghi.tgwing.lolock.Response.ResponseWeather;
 import com.gunghi.tgwing.lolock.model.RegisterUserInfo;
 
 import okhttp3.ResponseBody;
@@ -37,16 +39,6 @@ public interface LoLockService {
     );
 
 
-    // 로라등록
-   // @POST("/ThingPlug/register")
-   // Call<ResponseBody> registLoLock(
-   //         @Field("registerDeviceId") String registerDeviceId,
-   //         @Field("registerUserName") String registerUserName,
-   //         @Field("registerUserPhoneId") String registerUserPhoneId,
-   //         @Field("registerDeviceGPS_lat") String registerDeviceGPS_lat,
-   //         @Field("registerDeviceGPS_lon") String registerDeviceGPS_lon,
-   //         @Field("registerDeviceAddr") String registerDeviceAddr
-   // );
 
     // 원격 문열림
     @FormUrlEncoded
@@ -57,12 +49,12 @@ public interface LoLockService {
 
     // 문열림 링크 주기
     @GET("/ThingPlug/open-url/{deviceId}")
-    Call<ResponseBody> getDoorOpenCode(
+    Call<ResponseOpenDoorKey> getDoorOpenCode(
             @Path("deviceId") String deviceId);
 
     // 날씨 정보 가져오기
-    @GET("/ThingPlug/weatherData/{LTID}")
-    Call<ResponseBody> getWeatherData(
+    @GET("/ThingPlug/weatherdata/{LTID}")
+    Call<ResponseWeather> getWeatherData(
             @Path("LTID") String LTID);
 
 
@@ -70,6 +62,11 @@ public interface LoLockService {
     @GET("/ThingPlug/homemateslist/{LTID}")
     Call<ResponseMate> getHomeMateResponse(
             @Path("LTID") String LTID);
+
+    // 출입기록 알람 가져오기
+
+
+
 
 
 }
