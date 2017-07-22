@@ -1,9 +1,11 @@
 package com.gunghi.tgwing.lolock.fcm;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.gunghi.tgwing.lolock.model.RegisterUserInfo;
 
 /**
  * Created by joyeongje on 2017. 7. 16..
@@ -19,22 +21,23 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
      * is initially generated so this is where you would retrieve the token.
      */
     // [START refresh_token]
+
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        final String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Refreshed token: " + refreshedToken);
-
-        // TODO: 2017. 7. 16. 서버에서 관리할거면 이 톸큰을 서버로 보내야됨!
-
-        sendRegistrationToServer(refreshedToken);
-
+        saveTokenInRealmDB(refreshedToken);
     }
     // [END refresh_token]
 
-    private void sendRegistrationToServer(String token) {
-
-        // TODO: 2017. 7. 16. token을 현재 유저 정보에 넣어줘야됨.
+    private void saveTokenInRealmDB(final String token) {
+        RegisterUserInfo.getInstance().setRegisterUserPhoneId(token);
+        SharedPreferences lolockLocalData = getSharedPreferences("lolockLocalData", MODE_PRIVATE);
+        SharedPreferences.Editor editor = lolockLocalData.edit();
+        editor.putString("deviceId", token); //First라는 key값으로 infoFirst 데이터를 저장한다.
+        editor.apply(); //완료한다.
+        Log.d("토큰 저장","됨");
 
     }
 }

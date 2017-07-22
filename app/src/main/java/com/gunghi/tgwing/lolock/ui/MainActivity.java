@@ -1,6 +1,5 @@
 package com.gunghi.tgwing.lolock.ui;
 
-import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -33,11 +32,6 @@ import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.bluetooth.BluetoothLeService;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.single.PermissionListener;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tsengvn.typekit.TypekitContextWrapper;
@@ -77,6 +71,8 @@ public class MainActivity extends AppCompatActivity  {
 
     FragmentDoorOnOff fragmentDoorOnOff;
     FragmentMate      fragmentMate     ;
+    FragmentInfo fragmentInfo;
+    FragmentAlarm fragmentAlarm;
 
     // TODO: 2017-07-02 연결이 되었을때 끊어야함.
     private boolean mScanning;
@@ -262,20 +258,6 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Dexter.withActivity(this)
-                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                .withListener(new PermissionListener() {
-                    @Override public void onPermissionGranted(PermissionGrantedResponse response) {/* ... */}
-                    @Override public void onPermissionDenied(PermissionDeniedResponse response) {/* ... */}
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(com.karumi.dexter.listener.PermissionRequest permission, PermissionToken token) {
-
-                    }
-
-                }).check();
-
-        initLocationPermission();
         initFragment();
         initView(savedInstanceState);
 
@@ -284,9 +266,6 @@ public class MainActivity extends AppCompatActivity  {
        // mBottomBar = (BottomBar) findViewById(R.id.mainActivityBottomBar);
     }
 
-    private void initLocationPermission() {
-
-    }
 
     @Override
     protected void onResume() {
@@ -297,7 +276,7 @@ public class MainActivity extends AppCompatActivity  {
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         // TODO: 2017-07-02  블루투스 자동 연결 하는거 해야됨.
 
-        //if (mBluetoothLeService != null) {
+        //if (mBluetoothLeService != null) {x
         //    final boolean result = mBluetoothLeService.connect(mDeviceAddress);
         //    Log.d(TAG, "Connect request result=" + result);
         //}
@@ -376,16 +355,18 @@ public class MainActivity extends AppCompatActivity  {
                 switch (menuItemId) {
                     case R.id.menu_home:
                         currentSelectedFragment = fragmentDoorOnOff;
-                        mainTitleTextView.setText("출입문 Open/Closed");
+                        mainTitleTextView.setText("출입문 조작");
                         break;
                     case R.id.menu_family:
                         currentSelectedFragment = fragmentMate;
-                        mainTitleTextView.setText("동거인 현황");
+                        mainTitleTextView.setText("가족 현황");
                         break;
                     case R.id.menu_info:
+                        currentSelectedFragment = fragmentInfo;
                         mainTitleTextView.setText("날씨 및 일정");
                         break;
                     case R.id.menu_alarm:
+                        currentSelectedFragment = fragmentAlarm;
                         mainTitleTextView.setText("출입기록");
                         break;
                 }
@@ -412,6 +393,9 @@ public class MainActivity extends AppCompatActivity  {
     private void initFragment() {
         fragmentDoorOnOff = new FragmentDoorOnOff();
         fragmentMate      = new FragmentMate();
+        fragmentInfo = new FragmentInfo();
+        fragmentAlarm = new FragmentAlarm();
+
         currentSelectedFragment = fragmentDoorOnOff;
     }
 
@@ -464,6 +448,8 @@ public class MainActivity extends AppCompatActivity  {
   //                 mBluetoothLeService.connect(mDeviceAddress);
   //             }
   //         }
+
+
 
   //     }
 

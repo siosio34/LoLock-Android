@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.gunghi.tgwing.lolock.ui.RegisterActivity">
+
+    <TextView
+        android:id="@+id/checkLoraIdButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FC7336"
+        android:text="다음"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="27dp"
+        />
+
+    <TextView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FC7336"
+        android:text="LOLOCK 기기등록"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="110dp"
+        />
+
+    <ImageView
+        android:id="@+id/registerCircleImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_circle"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="165dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/registerCircleImageView"
+        app:layout_constraintLeft_toLeftOf="@+id/registerCircleImageView"
+        app:layout_constraintRight_toRightOf="@+id/registerCircleImageView"
+        android:layout_marginTop="110dp"
+        android:textColor="#FC7336"
+        android:textSize="25sp"
+        android:text="일련번호입력"
+        />
+
+    <EditText
+        android:id="@+id/registerEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColorHighlight="#FC7336"
+        android:hint="6~8자리 숫자를 입력해주세요"
+        android:textColorHint="#FC7336"
+        android:layout_marginTop="160dp"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="@+id/registerCircleImageView"
+        app:layout_constraintLeft_toLeftOf="@+id/registerCircleImageView"
+        app:layout_constraintRight_toRightOf="@+id/registerCircleImageView"
+        />
+
+</android.support.constraint.ConstraintLayout>
