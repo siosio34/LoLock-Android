@@ -8,7 +8,9 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -22,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.IdRes;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -354,18 +357,45 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     private void scanLeDevice(final boolean enable) {
-        if (enable) {
-            mBluetoothAdapter.startLeScan(mLeScanCallback);
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                }
-            }, SCAN_PERIOD);
 
-        } else {
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
-        }
+            if (enable) {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (Build.VERSION.SDK_INT < 21) {
+                            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                        } else {
+                            mLEScanner.stopScan(mScanCallback);
+                        }
+                    }
+                }, SCAN_PERIOD);
+                if (Build.VERSION.SDK_INT < 21) {
+                    mBluetoothAdapter.startLeScan(mLeScanCallback);
+                } else {
+                    mLEScanner.startScan(filters, settings, mScanCallback);
+                }
+            } else {
+                if (Build.VERSION.SDK_INT < 21) {
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                } else {
+                    mLEScanner.stopScan(mScanCallback);
+                }
+            }
+
+
+
+       // if (enable) {
+       //     mBluetoothAdapter.startLeScan(mLeScanCallback);
+       //     mHandler.postDelayed(new Runnable() {
+       //         @Override
+       //         public void run() {
+       //             mBluetoothAdapter.stopLeScan(mLeScanCallback);
+       //         }
+       //     }, SCAN_PERIOD);
+//
+       // } else {
+       //     mBluetoothAdapter.stopLeScan(mLeScanCallback);
+       // }
 
     }
 
@@ -460,40 +490,39 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
-  // @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-  // private ScanCallback mScanCallback = new ScanCallback() {
+     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+     private ScanCallback mScanCallback = new ScanCallback() {
 
-  //     @Override
-  //     public void onScanResult(int callbackType, ScanResult result) {
-  //         Log.d("mScanCallbackTest","여기들어옴");
-  //         Log.i("callbackType", String.valueOf(callbackType));
-  //         Log.i("result", result.toString());
-  //         BluetoothDevice btDevice = result.getDevice();
-  //         if(btDevice.getName()!= null) {
-  //             String deviceName = btDevice.getName();
-  //             if(deviceName.contains("LoLock")) {
-  //                 Log.d("device 자동검색","성공");
-  //                 mDeviceAddress = btDevice.getAddress();
-  //                 mBluetoothLeService.connect(mDeviceAddress);
-  //             }
-  //         }
+         @Override
+         public void onScanResult(int callbackType, ScanResult result) {
+             Log.d("mScanCallbackTest","여기들어옴");
+             Log.i("callbackType", String.valueOf(callbackType));
+             Log.i("result", result.toString());
+             BluetoothDevice btDevice = result.getDevice();
+             if(btDevice.getName()!= null) {
+                 String deviceName = btDevice.getName();
+                 if(deviceName.contains("LoLock")) {
+                     Log.d("device 자동검색","성공");
+                     // TODO: 2017. 7. 23. 이때 서버로 보낸다..!!
 
+                     mDeviceAddress = btDevice.getAddress();
+                    // mBluetoothLeService.connect(mDeviceAddress);
+                 }
+             }
+         }
 
+         @Override
+         public void onBatchScanResults(List<ScanResult> results) {
+             for (ScanResult sr : results) {
+                 Log.i("ScanResult - Results", sr.toString());
+             }
+         }
 
-  //     }
-
-  //     @Override
-  //     public void onBatchScanResults(List<ScanResult> results) {
-  //         for (ScanResult sr : results) {
-  //             Log.i("ScanResult - Results", sr.toString());
-  //         }
-  //     }
-
-  //     @Override
-  //     public void onScanFailed(int errorCode) {
-  //         Log.e("Scan Failed", "Error Code: " + errorCode);
-  //     }
-  // };
+         @Override
+         public void onScanFailed(int errorCode) {
+             Log.e("Scan Failed", "Error Code: " + errorCode);
+         }
+     };
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
             new BluetoothAdapter.LeScanCallback() {
@@ -507,8 +536,10 @@ public class MainActivity extends AppCompatActivity  {
                         Log.d("deviceName",deviceName);
                         if(deviceName.contains("LoLock")) {
                             Log.d("device 자동검색","성공");
+
+                            // TODO: 2017. 7. 23. 이때 서버로 보낸다..!!
                             mDeviceAddress = device.getAddress();
-                            mBluetoothLeService.connect(mDeviceAddress);
+                          //  mBluetoothLeService.connect(mDeviceAddress);
                         }
                     }
                 }
