@@ -270,18 +270,26 @@ public class MainActivity extends AppCompatActivity  {
 
         String freamgentFlag = getIntent().getStringExtra("viewFragment");
         if(freamgentFlag != null) {
+            Log.d("여기에에에","들어오니니니");
+
             switch (freamgentFlag) {
                 case "weatherPlan" :
                     currentSelectedFragment = fragmentInfo;
+                    mainTitleTextView.setText("날씨 및 일정");
+                    mBottomBar.selectTabAtPosition(2,true);
                     break;
                 case "inOutLog":
                     currentSelectedFragment = fragmentAlarm;
+                    mainTitleTextView.setText("출입기록");
+                    mBottomBar.selectTabAtPosition(3,true);
                     break;
             }
+
             getSupportFragmentManager().beginTransaction().
                     replace(R.id.mainActivityFragmentContainer,currentSelectedFragment).
                     commit();
         }
+
         //case PUSH_WEATHER_PLAN:
         //intent.putExtra("viewFragment","weatherPlan");
         //break;
@@ -407,6 +415,7 @@ public class MainActivity extends AppCompatActivity  {
         mBottomBar.useFixedMode();
         mBottomBar.setActiveTabColor("#FC7336");
         mBottomBar.setItems(R.menu.bottombar_menus);
+
         mBottomBar.setOnMenuTabClickListener(new OnMenuTabClickListener() {
             @Override
             public void onMenuTabSelected(@IdRes int menuItemId) {

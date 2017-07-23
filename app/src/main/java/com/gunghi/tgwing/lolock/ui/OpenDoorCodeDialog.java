@@ -80,7 +80,6 @@ public class OpenDoorCodeDialog extends Dialog {
 
     private void makeOpenDoorCode() {
 
-        // TODO: 2017. 7. 22. 이거처리해야됨 텍스트뷰 자동채우는거랑
         LoLockService loLockService = LoLockServiceGenarator.createService(LoLockService.class);
         Call<ResponseOpenDoorKey> requestOpenDoorCode = loLockService.getDoorOpenCode(UserInfo.getInstance().getDevideId());
         requestOpenDoorCode.enqueue(new Callback<ResponseOpenDoorKey>() {

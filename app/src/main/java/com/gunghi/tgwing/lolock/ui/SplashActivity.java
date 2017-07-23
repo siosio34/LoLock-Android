@@ -30,11 +30,15 @@ import retrofit2.Response;
 
 public class SplashActivity extends Activity {
 
+    private String freamgentFlag;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
+
+        freamgentFlag = getIntent().getStringExtra("viewFragment");
 
         //상단바 색깔 바꾸기
         Window window = getWindow();
@@ -74,6 +78,7 @@ public class SplashActivity extends Activity {
                         UserInfo.getInstance().setDevideId(deviceId);
 
                         Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+                        mainIntent.putExtra("viewFragment",freamgentFlag);
                         SplashActivity.this.startActivity(mainIntent);
                         SplashActivity.this.finish();
                     } else {

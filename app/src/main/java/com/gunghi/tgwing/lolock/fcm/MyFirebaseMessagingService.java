@@ -12,7 +12,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.gunghi.tgwing.lolock.R;
-import com.gunghi.tgwing.lolock.ui.MainActivity;
+import com.gunghi.tgwing.lolock.ui.SplashActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +27,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static final String PUSH_WEATHER_PLAN = "0";
     public static final String PUSH_IN_OUT_LOG = "1";
     public static final String PUSH_STRANGE_ALARM = "2";
+    public static final String PUSH_CHECK_USER = "3";
 
     /**
      * Called when message is received.
@@ -97,10 +98,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void sendNotification(String messageBody) {
 
-        Intent intent = new Intent(this,MainActivity.class);
+        Intent intent = new Intent(this,SplashActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         Log.d("FirebaseMessage Service",messageBody);
+
         try {
             JSONObject jsonObject = new JSONObject(messageBody);
             switch (jsonObject.getString("pushCode")) {
@@ -112,6 +114,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     break;
                 case PUSH_STRANGE_ALARM:
                     intent.putExtra("viewFragment","inOutLog");
+                    break;
+                case PUSH_CHECK_USER:
+                    intent.putExtra("viewFragment", "checkUser");
                     break;
             }
 
@@ -131,7 +136,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher_lolock)
                 .setContentTitle("LoLock 알림")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
