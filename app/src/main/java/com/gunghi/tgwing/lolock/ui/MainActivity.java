@@ -32,6 +32,8 @@ import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.bluetooth.BluetoothLeService;
+import com.gunghi.tgwing.lolock.util.ActivityResultEvent;
+import com.gunghi.tgwing.lolock.util.EventBus;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tsengvn.typekit.TypekitContextWrapper;
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity  {
 
     private BluetoothAdapter mBluetoothAdapter;
     private int REQUEST_ENABLE_BT = 1;
+    private int REQUEST_SCHELUAR = 2;
+
     private Handler mHandler;
     private static final long SCAN_PERIOD = 10000;
     private BluetoothLeScanner mLEScanner;
@@ -94,7 +98,6 @@ public class MainActivity extends AppCompatActivity  {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
-            Log.d("여기기기","드러러러ㅓ옴");
             // Automatically connects to the device upon successful start-up initialization.
             mBluetoothLeService.connect(mDeviceAddress);
         }
@@ -260,8 +263,31 @@ public class MainActivity extends AppCompatActivity  {
 
         initFragment();
         initView(savedInstanceState);
-
         checkBLE();
+
+        String freamgentFlag = getIntent().getStringExtra("viewFragment");
+        if(freamgentFlag != null) {
+            switch (freamgentFlag) {
+                case "weatherPlan" :
+                    currentSelectedFragment = fragmentInfo;
+                    break;
+                case "inOutLog":
+                    currentSelectedFragment = fragmentAlarm;
+                    break;
+            }
+            getSupportFragmentManager().beginTransaction().
+                    replace(R.id.mainActivityFragmentContainer,currentSelectedFragment).
+                    commit();
+        }
+        //case PUSH_WEATHER_PLAN:
+        //intent.putExtra("viewFragment","weatherPlan");
+        //break;
+        //case PUSH_IN_OUT_LOG:
+        //intent.putExtra("viewFragment","inOutLog");
+        //break;
+        //case PUSH_STRANGE_ALARM:
+        //intent.putExtra("viewFragment","inOutLog");
+        //break;
 
        // mBottomBar = (BottomBar) findViewById(R.id.mainActivityBottomBar);
     }
@@ -300,10 +326,13 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // User chose not to enable Bluetooth.
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
             Toast.makeText(this,"블루투스를 사용여부를 체크해주세요.",Toast.LENGTH_SHORT).show();
+        } else {
+            EventBus.getInstance().post(new ActivityResultEvent(requestCode, resultCode, data));
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
