@@ -71,6 +71,7 @@ public class FragmentInfo extends Fragment {
     TextView rainPercentTextView;
     TextView cloudAmounTextView;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -101,6 +102,7 @@ public class FragmentInfo extends Fragment {
         currentLocaleTextView = (TextView)viewGroup.findViewById(R.id.fragmentInfoWeatherLocale);
         rainPercentTextView = (TextView)viewGroup.findViewById(R.id.fragmentInfoRainPercent);
         cloudAmounTextView = (TextView)viewGroup.findViewById(R.id.fragmentInfoCloudAmount);
+
     }
 
     private void getWeartherInfo() {
@@ -126,16 +128,19 @@ public class FragmentInfo extends Fragment {
 
         int minTemperature = response.getMinTemperature();
         int maxTemperature = response.getMaxTemperature();
-        maxMinTempatureTextView.setText(minTemperature + "℃ /" + maxTemperature);
+        maxMinTempatureTextView.setText(minTemperature + "℃ /" + maxTemperature + "℃");
 
-        Double curTemperature = response.getTemperature();
-        currentTempatureTextView.setText(String.valueOf(curTemperature));
+        double curTemperature = response.getTemperature();
+        currentTempatureTextView.setText((int)curTemperature + "℃");
 
         int probabilityRain = response.getProbabilityRain();
-        rainPercentTextView.setText(probabilityRain + "%");
+        rainPercentTextView.setText("강수확률 : " + probabilityRain + "%");
 
         String sky = response.getSky();
         cloudAmounTextView.setText(sky);
+
+        String locale = response.getLocation();
+        currentLocaleTextView.setText(locale);
 
 
         // TODO: 2017. 7. 23. 주소줘야됨.
@@ -171,17 +176,17 @@ public class FragmentInfo extends Fragment {
 
     private void getSchedule() {
 
-       // getResultsFromApi();
-
-        mProgress = new ProgressDialog(getContext());
-        mProgress.setMessage("Calling Google Calendar API ...");
 
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
 
-        // TODO: 2017. 7. 20. 스케줄 정보
+        mProgress = new ProgressDialog(getContext());
+        mProgress.setMessage("구글 캘린더 정보를 가져오고 있습니다.");
+
+        getResultsFromApi();
+
     }
 
 

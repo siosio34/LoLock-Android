@@ -31,6 +31,9 @@ public class ResponseWeather {
     @Expose
     private Integer maxTemperature;
 
+    @SerializedName("location")
+    @Expose
+    private String location;
     /**
      * No args constructor for use in serialization
      *
@@ -116,4 +119,11 @@ public class ResponseWeather {
         this.maxTemperature = maxTemperature;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }
