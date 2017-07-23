@@ -47,6 +47,12 @@ public class OpenDoorCodeDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.door_open_code_dialog);
 
+        initOpenCodeDialogView();
+        makeOpenDoorCode();
+
+    }
+
+    private void initOpenCodeDialogView() {
         shareButton = (Button)findViewById(R.id.openCodePasteButton);
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,8 +76,6 @@ public class OpenDoorCodeDialog extends Dialog {
         });
 
         textView = (TextView) findViewById(R.id.openCodeTextView);
-        makeOpenDoorCode();
-
     }
 
     private void makeOpenDoorCode() {

@@ -38,8 +38,6 @@ public interface LoLockService {
             @Path("phoneId") String phoneId
     );
 
-
-
     // 원격 문열림
     @FormUrlEncoded
     @PUT("/ThingPlug/remote-open")
@@ -64,6 +62,7 @@ public interface LoLockService {
             @Path("LTID") String LTID);
 
     // 출입기록 알람 가져오기
+
 
 
 

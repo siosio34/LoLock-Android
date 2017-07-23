@@ -65,6 +65,7 @@ public class SplashActivity extends Activity {
             @Override
             public void onResponse(Call<ResponseUserInfo> call, Response<ResponseUserInfo> response) {
 
+                Log.d("response", String.valueOf(response.code()));
                 if (response.isSuccessful()) {
                     if (response.body().getCode().equals("REGISTRED")) {
                         UserInfo tempUserInfo = response.body().getUserInfo();
@@ -80,6 +81,10 @@ public class SplashActivity extends Activity {
                         SplashActivity.this.startActivity(registerIntent);
                         SplashActivity.this.finish();
                     }
+                } else {
+                    Intent registerIntent = new Intent(SplashActivity.this, RegisterActivity.class);
+                    SplashActivity.this.startActivity(registerIntent);
+                    SplashActivity.this.finish();
                 }
             }
 

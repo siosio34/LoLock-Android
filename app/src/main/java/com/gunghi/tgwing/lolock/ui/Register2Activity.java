@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.Response.ResponseDaumAddressAPI;
@@ -76,11 +77,19 @@ public class Register2Activity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         Log.d("response" ,response.toString());
+                        if(response.isSuccessful()) {
+                            Intent registerIntent = new Intent(Register2Activity.this, MainActivity.class);
+                            startActivity(registerIntent);
+                            Register2Activity.this.finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(),"에러",Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Log.d("response" ,call.toString());
+
                     }
                 });
 
