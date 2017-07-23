@@ -63,6 +63,7 @@ public class FragmentMate extends Fragment {
         mateAdapter = new MateAdapter(mates,getContext());
         mateRecyclerView.setAdapter(mateAdapter);
         mateRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
         getMateList();
 
         return rootView;
