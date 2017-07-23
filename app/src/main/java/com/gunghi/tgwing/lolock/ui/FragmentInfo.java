@@ -332,7 +332,7 @@ public class FragmentInfo extends Fragment {
 
          for (Event event : items) {
              DateTime start = event.getStart().getDateTime();
-
+             Log.d("event",event.toString());
              if (start == null) {
                  // All-day events don't have start times, so just use
                  // the start date.
