@@ -143,24 +143,25 @@ public class FragmentInfo extends Fragment {
         currentLocaleTextView.setText(locale);
 
 
-        // TODO: 2017. 7. 23. 주소줘야됨.
         switch (sky) {
             case "맑음":
+                weatherIconImageView.setImageResource(R.drawable.ic_sun);
                 break;
             case "구름 조금":
             case "구름 많음":
             case "흐림":
+                weatherIconImageView.setImageResource(R.drawable.ic_weather_cloud);
                 break;
             case "비":
+                weatherIconImageView.setImageResource(R.drawable.ic_rain);
                 break;
             case "눈":
+                weatherIconImageView.setImageResource(R.drawable.ic_snow);
                 break;
             default:
+                weatherIconImageView.setImageResource(R.drawable.ic_snow);
                 break;
-            // TODO: 2017. 7. 23. 이미지정보맵핑
         }
-
-
     }
 
     GoogleAccountCredential mCredential;
