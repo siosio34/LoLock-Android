@@ -8,7 +8,9 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -26,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.IdRes;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,6 +39,8 @@ import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.bluetooth.BluetoothLeService;
+import com.gunghi.tgwing.lolock.util.ActivityResultEvent;
+import com.gunghi.tgwing.lolock.util.EventBus;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tsengvn.typekit.TypekitContextWrapper;
@@ -56,6 +61,8 @@ public class MainActivity extends AppCompatActivity  {
 
     private BluetoothAdapter mBluetoothAdapter;
     private int REQUEST_ENABLE_BT = 1;
+    private int REQUEST_SCHELUAR = 2;
+
     private Handler mHandler;
     private static final long SCAN_PERIOD = 10000;
     private BluetoothLeScanner mLEScanner;
@@ -112,7 +119,6 @@ public class MainActivity extends AppCompatActivity  {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
-            Log.d("여기기기","드러러러ㅓ옴");
             // Automatically connects to the device upon successful start-up initialization.
             mBluetoothLeService.connect(mDeviceAddress);
         }
@@ -278,11 +284,43 @@ public class MainActivity extends AppCompatActivity  {
 
         initFragment();
         initView(savedInstanceState);
-
         checkBLE();
 
         //checkMoving();  <-- 작동기재가 필요, 작동시 moving 변수에 true or false 를 잠깐 남겼다가 false로 초기화됨
         //원본 test src URL = https://github.com/Loloara/AndroidStudy/tree/master/AccelometerSensorTest
+
+        String freamgentFlag = getIntent().getStringExtra("viewFragment");
+        if(freamgentFlag != null) {
+            Log.d("여기에에에","들어오니니니");
+
+            switch (freamgentFlag) {
+                case "weatherPlan" :
+                    currentSelectedFragment = fragmentInfo;
+                    mainTitleTextView.setText("날씨 및 일정");
+                    mBottomBar.selectTabAtPosition(2,true);
+                    break;
+                case "inOutLog":
+                    currentSelectedFragment = fragmentAlarm;
+                    mainTitleTextView.setText("출입기록");
+                    mBottomBar.selectTabAtPosition(3,true);
+                    break;
+            }
+
+            getSupportFragmentManager().beginTransaction().
+                    replace(R.id.mainActivityFragmentContainer,currentSelectedFragment).
+                    commit();
+        }
+
+        //case PUSH_WEATHER_PLAN:
+        //intent.putExtra("viewFragment","weatherPlan");
+        //break;
+        //case PUSH_IN_OUT_LOG:
+        //intent.putExtra("viewFragment","inOutLog");
+        //break;
+        //case PUSH_STRANGE_ALARM:
+        //intent.putExtra("viewFragment","inOutLog");
+        //break;
+
 
        // mBottomBar = (BottomBar) findViewById(R.id.mainActivityBottomBar);
     }
@@ -321,10 +359,13 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // User chose not to enable Bluetooth.
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
             Toast.makeText(this,"블루투스를 사용여부를 체크해주세요.",Toast.LENGTH_SHORT).show();
+        } else {
+            EventBus.getInstance().post(new ActivityResultEvent(requestCode, resultCode, data));
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -348,18 +389,45 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     private void scanLeDevice(final boolean enable) {
-        if (enable) {
-            mBluetoothAdapter.startLeScan(mLeScanCallback);
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                }
-            }, SCAN_PERIOD);
 
-        } else {
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
-        }
+            if (enable) {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (Build.VERSION.SDK_INT < 21) {
+                            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                        } else {
+                            mLEScanner.stopScan(mScanCallback);
+                        }
+                    }
+                }, SCAN_PERIOD);
+                if (Build.VERSION.SDK_INT < 21) {
+                    mBluetoothAdapter.startLeScan(mLeScanCallback);
+                } else {
+                    mLEScanner.startScan(filters, settings, mScanCallback);
+                }
+            } else {
+                if (Build.VERSION.SDK_INT < 21) {
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                } else {
+                    mLEScanner.stopScan(mScanCallback);
+                }
+            }
+
+
+
+       // if (enable) {
+       //     mBluetoothAdapter.startLeScan(mLeScanCallback);
+       //     mHandler.postDelayed(new Runnable() {
+       //         @Override
+       //         public void run() {
+       //             mBluetoothAdapter.stopLeScan(mLeScanCallback);
+       //         }
+       //     }, SCAN_PERIOD);
+//
+       // } else {
+       //     mBluetoothAdapter.stopLeScan(mLeScanCallback);
+       // }
 
     }
 
@@ -371,6 +439,7 @@ public class MainActivity extends AppCompatActivity  {
         mBottomBar.useFixedMode();
         mBottomBar.setActiveTabColor("#FC7336");
         mBottomBar.setItems(R.menu.bottombar_menus);
+
         mBottomBar.setOnMenuTabClickListener(new OnMenuTabClickListener() {
             @Override
             public void onMenuTabSelected(@IdRes int menuItemId) {
@@ -508,40 +577,39 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
-  // @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-  // private ScanCallback mScanCallback = new ScanCallback() {
+     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+     private ScanCallback mScanCallback = new ScanCallback() {
 
-  //     @Override
-  //     public void onScanResult(int callbackType, ScanResult result) {
-  //         Log.d("mScanCallbackTest","여기들어옴");
-  //         Log.i("callbackType", String.valueOf(callbackType));
-  //         Log.i("result", result.toString());
-  //         BluetoothDevice btDevice = result.getDevice();
-  //         if(btDevice.getName()!= null) {
-  //             String deviceName = btDevice.getName();
-  //             if(deviceName.contains("LoLock")) {
-  //                 Log.d("device 자동검색","성공");
-  //                 mDeviceAddress = btDevice.getAddress();
-  //                 mBluetoothLeService.connect(mDeviceAddress);
-  //             }
-  //         }
+         @Override
+         public void onScanResult(int callbackType, ScanResult result) {
+             Log.d("mScanCallbackTest","여기들어옴");
+             Log.i("callbackType", String.valueOf(callbackType));
+             Log.i("result", result.toString());
+             BluetoothDevice btDevice = result.getDevice();
+             if(btDevice.getName()!= null) {
+                 String deviceName = btDevice.getName();
+                 if(deviceName.contains("LoLock")) {
+                     Log.d("device 자동검색","성공");
+                     // TODO: 2017. 7. 23. 이때 서버로 보낸다..!!
 
+                     mDeviceAddress = btDevice.getAddress();
+                    // mBluetoothLeService.connect(mDeviceAddress);
+                 }
+             }
+         }
 
+         @Override
+         public void onBatchScanResults(List<ScanResult> results) {
+             for (ScanResult sr : results) {
+                 Log.i("ScanResult - Results", sr.toString());
+             }
+         }
 
-  //     }
-
-  //     @Override
-  //     public void onBatchScanResults(List<ScanResult> results) {
-  //         for (ScanResult sr : results) {
-  //             Log.i("ScanResult - Results", sr.toString());
-  //         }
-  //     }
-
-  //     @Override
-  //     public void onScanFailed(int errorCode) {
-  //         Log.e("Scan Failed", "Error Code: " + errorCode);
-  //     }
-  // };
+         @Override
+         public void onScanFailed(int errorCode) {
+             Log.e("Scan Failed", "Error Code: " + errorCode);
+         }
+     };
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
             new BluetoothAdapter.LeScanCallback() {
@@ -555,8 +623,10 @@ public class MainActivity extends AppCompatActivity  {
                         Log.d("deviceName",deviceName);
                         if(deviceName.contains("LoLock")) {
                             Log.d("device 자동검색","성공");
+
+                            // TODO: 2017. 7. 23. 이때 서버로 보낸다..!!
                             mDeviceAddress = device.getAddress();
-                            mBluetoothLeService.connect(mDeviceAddress);
+                          //  mBluetoothLeService.connect(mDeviceAddress);
                         }
                     }
                 }

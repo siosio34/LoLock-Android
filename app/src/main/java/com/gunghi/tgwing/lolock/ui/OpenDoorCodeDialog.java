@@ -47,6 +47,12 @@ public class OpenDoorCodeDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.door_open_code_dialog);
 
+        initOpenCodeDialogView();
+        makeOpenDoorCode();
+
+    }
+
+    private void initOpenCodeDialogView() {
         shareButton = (Button)findViewById(R.id.openCodePasteButton);
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +61,7 @@ public class OpenDoorCodeDialog extends Dialog {
                 ClipData clipData = ClipData.newPlainText("label",textView.getText().toString());
                 clipboardManager.setPrimaryClip(clipData);
                 Toast.makeText(getContext(),"일회용키가 복사되었습니다",Toast.LENGTH_SHORT).show();
+                dismiss();
             }
         });
         sendButton = (Button)findViewById(R.id.openCodeSendButton);
@@ -70,13 +77,10 @@ public class OpenDoorCodeDialog extends Dialog {
         });
 
         textView = (TextView) findViewById(R.id.openCodeTextView);
-        makeOpenDoorCode();
-
     }
 
     private void makeOpenDoorCode() {
 
-        // TODO: 2017. 7. 22. 이거처리해야됨 텍스트뷰 자동채우는거랑
         LoLockService loLockService = LoLockServiceGenarator.createService(LoLockService.class);
         Call<ResponseOpenDoorKey> requestOpenDoorCode = loLockService.getDoorOpenCode(UserInfo.getInstance().getDevideId());
         requestOpenDoorCode.enqueue(new Callback<ResponseOpenDoorKey>() {

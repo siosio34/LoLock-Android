@@ -12,7 +12,10 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.gunghi.tgwing.lolock.R;
-import com.gunghi.tgwing.lolock.ui.MainActivity;
+import com.gunghi.tgwing.lolock.ui.SplashActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by joyeongje on 2017. 7. 16..
@@ -20,6 +23,11 @@ import com.gunghi.tgwing.lolock.ui.MainActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
+
+    public static final String PUSH_WEATHER_PLAN = "0";
+    public static final String PUSH_IN_OUT_LOG = "1";
+    public static final String PUSH_STRANGE_ALARM = "2";
+    public static final String PUSH_CHECK_USER = "3";
 
     /**
      * Called when message is received.
@@ -47,31 +55,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // 백그라운드 포그라운드 둘다됨.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-            sendNotification("DDDDD");
-
-
-
-
-            // TODO: 2017. 7. 22. 푸쉬메시지 코드에따라 푸쉬알람 띄어주기.! 
-            // https://github.com/siosio34/AR-Trace/blob/master/app/src/main/java/com/dragon4/owo/ar_trace/FCM/FCMMessagingService.java
-
-
-
-           // if (/* Check if data needs to be processed by long running job */ true) {
-           //     // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-           //     scheduleJob();
-           // } else {
-           //     // Handle message within 10 seconds
-           //     handleNow();
-           // }
-
-
+            sendNotification(remoteMessage.getData().toString());
         }
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            sendNotification("DDDDD");
+            //sendNotification("DDDDD");
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -107,15 +97,47 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
     private void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, MainActivity.class);
+
+        Intent intent = new Intent(this,SplashActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        Log.d("FirebaseMessage Service",messageBody);
+
+        try {
+            JSONObject jsonObject = new JSONObject(messageBody);
+            switch (jsonObject.getString("pushCode")) {
+                case PUSH_WEATHER_PLAN:
+                    intent.putExtra("viewFragment","weatherPlan");
+                    break;
+                case PUSH_IN_OUT_LOG:
+                    intent.putExtra("viewFragment","inOutLog");
+                    break;
+                case PUSH_STRANGE_ALARM:
+                    intent.putExtra("viewFragment","inOutLog");
+                    break;
+                case PUSH_CHECK_USER:
+                    intent.putExtra("viewFragment", "checkUser");
+                    break;
+            }
+
+        } catch (JSONException e) {
+            Log.d("FirebaseMessage", "can't parsing json");
+            e.printStackTrace();
+        }
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
+
+        // Intent intent = new Intent(this, MainActivity.class);
+       // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+       // PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+       //         PendingIntent.FLAG_ONE_SHOT);
+
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("FCM Message")
+                .setSmallIcon(R.mipmap.ic_launcher_lolock)
+                .setContentTitle("LoLock 알림")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

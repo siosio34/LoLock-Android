@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.Response.ResponseMate;
 import com.gunghi.tgwing.lolock.model.Mate;
+import com.gunghi.tgwing.lolock.model.UserInfo;
 import com.gunghi.tgwing.lolock.network.LoLockService;
 import com.gunghi.tgwing.lolock.network.LoLockServiceGenarator;
 import com.squareup.picasso.Picasso;
@@ -62,6 +63,7 @@ public class FragmentMate extends Fragment {
         mateAdapter = new MateAdapter(mates,getContext());
         mateRecyclerView.setAdapter(mateAdapter);
         mateRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
         getMateList();
 
         return rootView;
@@ -69,7 +71,7 @@ public class FragmentMate extends Fragment {
 
     private void getMateList() {
         LoLockService loLockService = LoLockServiceGenarator.createService(LoLockService.class);
-        String ltid = "00000174d02544fffef0103d";
+        String ltid = UserInfo.getInstance().getLolockLTID();
         Call<ResponseMate> responseMate = loLockService.getHomeMateResponse(ltid);
         responseMate.enqueue(new Callback<ResponseMate>() {
             @Override

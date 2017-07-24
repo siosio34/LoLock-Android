@@ -1,5 +1,6 @@
 package com.gunghi.tgwing.lolock.network;
 
+import com.gunghi.tgwing.lolock.Response.ResponseInOutLog;
 import com.gunghi.tgwing.lolock.Response.ResponseLoLockService;
 import com.gunghi.tgwing.lolock.Response.ResponseMate;
 import com.gunghi.tgwing.lolock.Response.ResponseOpenDoorKey;
@@ -38,8 +39,6 @@ public interface LoLockService {
             @Path("phoneId") String phoneId
     );
 
-
-
     // 원격 문열림
     @FormUrlEncoded
     @PUT("/ThingPlug/remote-open")
@@ -64,9 +63,10 @@ public interface LoLockService {
             @Path("LTID") String LTID);
 
     // 출입기록 알람 가져오기
-
-
-
+    @GET("/ThingPlug/outing-log/{deviceId}")
+    Call<ResponseInOutLog> getInOutLog(
+            @Path("deviceId") String deviceId
+    );
 
 
 }

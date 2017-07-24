@@ -1,6 +1,7 @@
 package com.gunghi.tgwing.lolock.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -8,15 +9,26 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gunghi.tgwing.lolock.R;
+import com.gunghi.tgwing.lolock.Response.ResponseInOutLog;
 import com.gunghi.tgwing.lolock.model.InOutLog;
+import com.gunghi.tgwing.lolock.model.UserInfo;
+import com.gunghi.tgwing.lolock.network.LoLockService;
+import com.gunghi.tgwing.lolock.network.LoLockServiceGenarator;
 
 import java.util.ArrayList;
+import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by joyeongje on 2017. 7. 20..
@@ -27,6 +39,7 @@ public class FragmentAlarm extends Fragment {
     private InOutLogAdapter inOutLogAdapter;
     private ArrayList<InOutLog> inOutLogs;
 
+    Date date;
 
     @Nullable
     @Override
@@ -39,10 +52,6 @@ public class FragmentAlarm extends Fragment {
         mateRecyclerView.scrollToPosition(0);
 
         inOutLogs = new ArrayList<>();
-        inOutLogs.add(new InOutLog());
-        inOutLogs.add(new InOutLog());
-        inOutLogs.add(new InOutLog());
-
         //mates.add(new Mate("http://cfile3.uf.tistory.com/image/246667375764E38E1D1A93","임정연","in","10분"));
         //mates.add(new Mate("http://cfile3.uf.tistory.com/image/246667375764E38E1D1A93","임정연","in","10분"));
         //mates.add(new Mate("http://cfile3.uf.tistory.com/image/246667375764E38E1D1A93","임정연","in","10분"));
@@ -50,9 +59,40 @@ public class FragmentAlarm extends Fragment {
         inOutLogAdapter = new InOutLogAdapter(inOutLogs,getContext());
         mateRecyclerView.setAdapter(inOutLogAdapter);
         mateRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        date = new Date();
+        getInOutLogList();
        // getMateList();
         return rootView;
     }
+
+    private void getInOutLogList() {
+        LoLockService loLockService = LoLockServiceGenarator.createService(LoLockService.class);
+        Call<ResponseInOutLog> callLolockService = loLockService.getInOutLog(UserInfo.getInstance().getDevideId());
+        callLolockService.enqueue(new Callback<ResponseInOutLog>() {
+            @Override
+            public void onResponse(Call<ResponseInOutLog> call, Response<ResponseInOutLog> response) {
+                alramDataMappingUi(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseInOutLog> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void alramDataMappingUi(ResponseInOutLog response) {
+
+        for(ResponseInOutLog.Result result : response.getResults()) {
+            String name = result.getName();
+            int outFlag = result.getOutFlag();
+            ResponseInOutLog.OutTime outTime = result.getOutTime();
+            int strangFlag = result.getStrangeFlag();
+            inOutLogs.add(new InOutLog(name,outFlag,outTime,strangFlag));
+        }
+        inOutLogAdapter.notifyDataSetChanged();
+    }
+
 
     private class InOutLogAdapter extends RecyclerView.Adapter<InOutLogAdapter.ViewHolder>  {
 
@@ -75,10 +115,38 @@ public class FragmentAlarm extends Fragment {
         public void onBindViewHolder(InOutLogAdapter.ViewHolder holder, int position) {
             final InOutLog inoutLog = inoutLogs.get(position);
 
+            String nameText = "";
+
             // TODO: 2017. 7. 22. 타임 가져오긔
-            holder.inOutNameTextView.setText("이종구님이 귀가하셨습니다.");
-            holder.inOutTime.setText("12분전");
-            holder.inOutDate.setText("05/12(수)");
+            if(inoutLog.getStrangeFlag() == 1 ) {
+                holder.inOutContainer.setBackgroundColor(Color.parseColor("#FF9797"));
+                holder.inOutContainer.setAlpha(0.85f);
+                holder.inoutImageView.setImageResource(R.drawable.ic_alarm_known);
+                nameText = "외부인의 침입이 의심됩니다!";
+
+            } else {
+                holder.inoutImageView.setImageResource(R.drawable.ic_alarm_unknown);
+                nameText = inoutLog.getName() + "님이 ";
+                // 1일때 나간거
+                if(inoutLog.getOutingFlag() == 0) {
+                    nameText += "귀가하였습니다.";
+                } else {
+                    nameText += "외출하셨습니다.";
+                }
+            }
+
+            holder.inOutNameTextView.setText(nameText);
+            long diff = inoutLog.getInOutDate().getTimeStamp();
+
+            Log.d("timeStamp",String.valueOf(diff));
+            long diffMinutes = diff / (60 * 1000);
+          //  long diffHours = diff / (60 * 60 * 1000);
+
+            String duringTime = diffMinutes/60 + "시간 " +
+                    diffMinutes%60 + "분전";
+            holder.inOutTime.setText(duringTime);
+            holder.inOutDate.setText(inoutLog.getInOutDate().getMonth() + "/" +
+                    inoutLog.getInOutDate().getDay() + "(" + inoutLog.getInOutDate().getDayName() + ")");
 
             //Picasso.with(context).load(mateInfo.getMateImageUrl()).into(holder.mateProfile);//Log.d("url",mateInfo.getMateImageUrl());
            // holder.mateName.setText(mateInfo.getMateName());
@@ -102,6 +170,7 @@ public class FragmentAlarm extends Fragment {
             public TextView         inOutNameTextView;
             public TextView         inOutTime;
             public TextView         inOutDate;
+            public ImageView        inoutImageView;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -109,6 +178,8 @@ public class FragmentAlarm extends Fragment {
                 inOutNameTextView = (TextView) itemView.findViewById(R.id.inOutName);
                 inOutTime = (TextView) itemView.findViewById(R.id.inOutTime);
                 inOutDate = (TextView) itemView.findViewById(R.id.inOutDate);
+                inoutImageView = (ImageView) itemView.findViewById(R.id.icAlarmImageView);
+
              //   mateProfile = (CircleImageView) itemView.findViewById(R.id.mateProfileImageView);
              //   mateName = (TextView) itemView.findViewById(R.id.mateNameTextView);
              //   mateDoorOpenTime = (TextView) itemView.findViewById(R.id.mateOutingTimeTextView);

@@ -1,5 +1,7 @@
 package com.gunghi.tgwing.lolock.model;
 
+import com.gunghi.tgwing.lolock.Response.ResponseInOutLog;
+
 /**
  * Created by joyeongje on 2017. 7. 22..
  */
@@ -7,17 +9,18 @@ package com.gunghi.tgwing.lolock.model;
 public class InOutLog {
 
     private String name;
-    private String time;
-    private String inOutDate;
-    private String strangeFlag;
+    private int outingFlag;
+    private ResponseInOutLog.OutTime inOutDate;
+    private int strangeFlag;
+
 
     public InOutLog() {
 
     }
 
-    public InOutLog(String name, String time, String inOutDate, String strangeFlag) {
+    public InOutLog(String name, int outingFlag, ResponseInOutLog.OutTime inOutDate, int strangeFlag) {
         this.name = name;
-        this.time = time;
+        this.outingFlag = outingFlag;
         this.inOutDate = inOutDate;
         this.strangeFlag = strangeFlag;
     }
@@ -30,27 +33,27 @@ public class InOutLog {
         this.name = name;
     }
 
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getStrangeFlag() {
+    public int getStrangeFlag() {
         return strangeFlag;
     }
 
-    public void setStrangeFlag(String strangeFlag) {
+    public void setStrangeFlag(int strangeFlag) {
         this.strangeFlag = strangeFlag;
     }
 
-    public String getInOutDate() {
+    public ResponseInOutLog.OutTime getInOutDate() {
         return inOutDate;
     }
 
-    public void setInOutDate(String inOutDate) {
+    public void setInOutDate(ResponseInOutLog.OutTime inOutDate) {
         this.inOutDate = inOutDate;
+    }
+
+    public int getOutingFlag() {
+        return outingFlag;
+    }
+
+    public void setOutingFlag(int outingFlag) {
+        this.outingFlag = outingFlag;
     }
 }
