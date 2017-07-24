@@ -277,46 +277,36 @@ public class MainActivity extends AppCompatActivity  {
                     currentSelectedFragment = fragmentInfo;
                     mainTitleTextView.setText("날씨 및 일정");
                     mBottomBar.selectTabAtPosition(2,true);
+                    getSupportFragmentManager().beginTransaction().
+                            replace(R.id.mainActivityFragmentContainer,currentSelectedFragment).
+                            commit();
                     break;
                 case "inOutLog":
                     currentSelectedFragment = fragmentAlarm;
                     mainTitleTextView.setText("출입기록");
                     mBottomBar.selectTabAtPosition(3,true);
+                    getSupportFragmentManager().
+                            beginTransaction().
+                            replace(R.id.mainActivityFragmentContainer,currentSelectedFragment).
+                            commit();
+                    break;
+                case "checkOutUser":
+                case "checkInUser":
+                    checkInOrOutUser(freamgentFlag);
                     break;
             }
 
-            getSupportFragmentManager().beginTransaction().
-                    replace(R.id.mainActivityFragmentContainer,currentSelectedFragment).
-                    commit();
+
         }
 
-        //case PUSH_WEATHER_PLAN:
-        //intent.putExtra("viewFragment","weatherPlan");
-        //break;
-        //case PUSH_IN_OUT_LOG:
-        //intent.putExtra("viewFragment","inOutLog");
-        //break;
-        //case PUSH_STRANGE_ALARM:
-        //intent.putExtra("viewFragment","inOutLog");
-        //break;
-
-       // mBottomBar = (BottomBar) findViewById(R.id.mainActivityBottomBar);
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
-        // fire an intent to display a dialog asking the user to grant permission to enable it.
-        scanBLE();
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-        // TODO: 2017-07-02  블루투스 자동 연결 하는거 해야됨.
 
-        //if (mBluetoothLeService != null) {x
-        //    final boolean result = mBluetoothLeService.connect(mDeviceAddress);
-        //    Log.d(TAG, "Connect request result=" + result);
-        //}
     }
     private void scanBLE() {
         if (!mBluetoothAdapter.isEnabled()) {
@@ -366,46 +356,55 @@ public class MainActivity extends AppCompatActivity  {
 
     private void scanLeDevice(final boolean enable) {
 
-            if (enable) {
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Build.VERSION.SDK_INT < 21) {
-                            mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                        } else {
-                            mLEScanner.stopScan(mScanCallback);
-                        }
-                    }
-                }, SCAN_PERIOD);
-                if (Build.VERSION.SDK_INT < 21) {
-                    mBluetoothAdapter.startLeScan(mLeScanCallback);
-                } else {
-                    mLEScanner.startScan(filters, settings, mScanCallback);
-                }
-            } else {
-                if (Build.VERSION.SDK_INT < 21) {
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                } else {
-                    mLEScanner.stopScan(mScanCallback);
-                }
-            }
-
-
-
-       // if (enable) {
-       //     mBluetoothAdapter.startLeScan(mLeScanCallback);
-       //     mHandler.postDelayed(new Runnable() {
-       //         @Override
-       //         public void run() {
-       //             mBluetoothAdapter.stopLeScan(mLeScanCallback);
-       //         }
-       //     }, SCAN_PERIOD);
-//
-       // } else {
-       //     mBluetoothAdapter.stopLeScan(mLeScanCallback);
-       // }
+              if (enable) {
+                  mHandler.postDelayed(new Runnable() {
+                      @Override
+                      public void run() {
+                          if (Build.VERSION.SDK_INT < 21) {
+                              mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                          } else {
+                              mLEScanner.stopScan(mScanCallback);
+                          }
+                      }
+                  }, SCAN_PERIOD);
+                  if (Build.VERSION.SDK_INT < 21) {
+                      mBluetoothAdapter.startLeScan(mLeScanCallback);
+                  } else {
+                      mLEScanner.startScan(filters, settings, mScanCallback);
+                  }
+              } else {
+                  if (Build.VERSION.SDK_INT < 21) {
+                      mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                  } else {
+                      mLEScanner.stopScan(mScanCallback);
+                  }
+              }
+      //   if (enable) {
+      //       mHandler.postDelayed(new Runnable() {
+      //           @Override
+      //           public void run() {
+      //               mBluetoothAdapter.stopLeScan(mLeScanCallback);
+      //           }
+      //       }, SCAN_PERIOD);
+      //
+      //       mBluetoothAdapter.startLeScan(mLeScanCallback);
+      //
+      //   } else {
+      //       mBluetoothAdapter.stopLeScan(mLeScanCallback);
+      //   }
 
     }
+
+    private void checkInOrOutUser(String flag) {
+
+        scanBLE();
+        // 가속도 센서 값 읽어옴.
+        // 블루투스 값 읽어옴.
+
+
+
+    }
+
 
 
     private void initView(Bundle savedInstanceState) {
@@ -504,17 +503,20 @@ public class MainActivity extends AppCompatActivity  {
 
          @Override
          public void onScanResult(int callbackType, ScanResult result) {
-             Log.d("mScanCallbackTest","여기들어옴");
-             Log.i("callbackType", String.valueOf(callbackType));
-             Log.i("result", result.toString());
              BluetoothDevice btDevice = result.getDevice();
              if(btDevice.getName()!= null) {
                  String deviceName = btDevice.getName();
                  if(deviceName.contains("LoLock")) {
                      Log.d("device 자동검색","성공");
-                     // TODO: 2017. 7. 23. 이때 서버로 보낸다..!!
 
-                     mDeviceAddress = btDevice.getAddress();
+                     // TODO: 2017. 7. 25. 서버로 보낸다...!
+                     int rssi = result.getRssi();
+
+
+
+
+
+                   //  mDeviceAddress = btDevice.getAddress();
                     // mBluetoothLeService.connect(mDeviceAddress);
                  }
              }
@@ -537,16 +539,19 @@ public class MainActivity extends AppCompatActivity  {
             new BluetoothAdapter.LeScanCallback() {
                 @Override
                 public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-                    Log.d("mScanCallbackTest","여기들어옴");
-                    Log.i("callbackType", String.valueOf(rssi));
-                    Log.i("result", scanRecord.toString());
+                    //Log.d("mScanCallbackTest","여기들어옴");
+                    //Log.i("callbackType", String.valueOf(rssi));
+                    //Log.i("result", scanRecord.toString());
+
                     if(device.getName()!= null) {
                         String deviceName = device.getName();
                         Log.d("deviceName",deviceName);
                         if(deviceName.contains("LoLock")) {
                             Log.d("device 자동검색","성공");
 
-                            // TODO: 2017. 7. 23. 이때 서버로 보낸다..!!
+                            // TODO: 2017. 7. 25. 이때 스캔
+
+
                             mDeviceAddress = device.getAddress();
                           //  mBluetoothLeService.connect(mDeviceAddress);
                         }

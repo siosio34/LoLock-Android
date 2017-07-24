@@ -12,6 +12,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.gunghi.tgwing.lolock.R;
+import com.gunghi.tgwing.lolock.network.LoLockService;
 import com.gunghi.tgwing.lolock.ui.SplashActivity;
 
 import org.json.JSONException;
@@ -27,7 +28,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static final String PUSH_WEATHER_PLAN = "0";
     public static final String PUSH_IN_OUT_LOG = "1";
     public static final String PUSH_STRANGE_ALARM = "2";
-    public static final String PUSH_CHECK_USER = "3";
+    public static final String PUSH_OUT_CHECK_USER = "3";
+    public static final String PUSH_IN_CHECK_USER = "4";
+
+    private LoLockService lolockService;
 
     /**
      * Called when message is received.
@@ -115,8 +119,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 case PUSH_STRANGE_ALARM:
                     intent.putExtra("viewFragment","inOutLog");
                     break;
-                case PUSH_CHECK_USER:
-                    intent.putExtra("viewFragment", "checkUser");
+                case PUSH_OUT_CHECK_USER:
+                    intent.putExtra("viewFragment", "checkOutUser");
+                    break;
+                case PUSH_IN_CHECK_USER:
+                    intent.putExtra("viewFragment", "checkInUser");
                     break;
             }
 

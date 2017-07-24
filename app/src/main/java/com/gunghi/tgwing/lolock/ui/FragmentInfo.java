@@ -177,7 +177,6 @@ public class FragmentInfo extends Fragment {
 
     private void getSchedule() {
 
-
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getContext(), Arrays.asList(SCOPES))

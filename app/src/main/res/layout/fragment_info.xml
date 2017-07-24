@@ -141,6 +141,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         />
 
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+    </android.support.v7.widget.RecyclerView>
+
 
 
 </android.support.constraint.ConstraintLayout>
