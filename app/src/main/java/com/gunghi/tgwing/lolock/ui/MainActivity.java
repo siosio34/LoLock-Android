@@ -19,6 +19,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -85,6 +89,20 @@ public class MainActivity extends AppCompatActivity  {
     private boolean mScanning;
 
     private BluetoothLeService mBluetoothLeService;
+
+
+    // 가속도 센서 필요 멤버변수
+    private int mShakeCount=0;
+    private int delayCount=0;
+    private boolean moving = false;
+    private static final int WAITING_TIME_FOR_START = 30;
+    private static final int NUMBER_OF_GETTING_VALUE = 20;
+    private static final float THRESHOLD_GRAVITY_HIGH = 1.25F;
+    private static final float THRESHOLD_GRAVITY_LOW = 0.8F;
+    private SensorManager mSensorManager = null;
+    private SensorEventListener mAccLis;
+    private Sensor mAccelometerSensor = null;
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -268,6 +286,9 @@ public class MainActivity extends AppCompatActivity  {
         initView(savedInstanceState);
         checkBLE();
 
+        //checkMoving();  <-- 작동기재가 필요, 작동시 moving 변수에 true or false 를 잠깐 남겼다가 false로 초기화됨
+        //원본 test src URL = https://github.com/Loloara/AndroidStudy/tree/master/AccelometerSensorTest
+
         String freamgentFlag = getIntent().getStringExtra("viewFragment");
         if(freamgentFlag != null) {
             Log.d("여기에에에","들어오니니니");
@@ -298,6 +319,7 @@ public class MainActivity extends AppCompatActivity  {
 
 
         }
+
 
     }
 
@@ -343,6 +365,7 @@ public class MainActivity extends AppCompatActivity  {
             scanLeDevice(false);
         }
         unregisterReceiver(mGattUpdateReceiver);
+        mSensorManager.unregisterListener(mAccLis);
         //scanLeDevice(false);
     }
 
@@ -352,6 +375,7 @@ public class MainActivity extends AppCompatActivity  {
         super.onDestroy();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
+        mSensorManager.unregisterListener(mAccLis);
     }
 
     private void scanLeDevice(final boolean enable) {
@@ -487,7 +511,61 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-    
+    private void checkMoving(){
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mAccLis = new AccelometerListener();
+        mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
+        //WAITING_TIME_FOR_START(30) 만큼 기다렸다가 NUMBER_OF_GETTING_VALUE(20) 만큼 동안 움직임을 측정 후 Listener를 자동 해제한다.
+    }
+
+    private class AccelometerListener implements SensorEventListener {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+                delayCount++;
+                if(delayCount > WAITING_TIME_FOR_START && delayCount <= WAITING_TIME_FOR_START + NUMBER_OF_GETTING_VALUE) {
+                    double accX = event.values[0];
+                    double accY = event.values[1];
+                    double accZ = event.values[2];
+
+                    double gravityX = accX / SensorManager.GRAVITY_EARTH;
+                    double gravityY = accY / SensorManager.GRAVITY_EARTH;
+                    double gravityZ = accZ / SensorManager.GRAVITY_EARTH;
+
+                    double f = gravityX * gravityX + gravityY * gravityY + gravityZ * gravityZ;
+                    double squaredD = Math.sqrt(f);
+                    float gForce = (float) squaredD;
+
+                    if (gForce > THRESHOLD_GRAVITY_HIGH || gForce < THRESHOLD_GRAVITY_LOW) {
+                        mShakeCount++;
+                        moving = true;
+                    }
+                    Log.e("LOG", "Count: " + String.format("%d", mShakeCount) + "     gForce: " + String.format("%f", gForce));
+                }
+                if(delayCount == WAITING_TIME_FOR_START + NUMBER_OF_GETTING_VALUE + 1){
+                    if(moving)
+                        Log.e("LOG", "This phone is moving");
+                    else
+                        Log.e("LOG", "This phone is stopped");
+                }
+
+                if(delayCount == WAITING_TIME_FOR_START + NUMBER_OF_GETTING_VALUE + 2){
+                    //해제하면서 moving을 포함한 변수들 초기화
+                    mSensorManager.unregisterListener(mAccLis);
+                    moving = false;
+                    mShakeCount = 0;
+                    delayCount = 0;
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -509,13 +587,15 @@ public class MainActivity extends AppCompatActivity  {
                  if(deviceName.contains("LoLock")) {
                      Log.d("device 자동검색","성공");
 
-                     // TODO: 2017. 7. 25. 서버로 보낸다...!
                      int rssi = result.getRssi();
+                     // TODO 종구: 2017. 7. 25.  ble 가 lolock device 가 잡혔을대 동작하는 함수이다
+                     // 누가 나갔는지 알기 위해서는 여기서 일정시간동안 움직인 가속도 센서의 총데이터와 움직였는지 여부를 판단하는게 중요하다.!
+                     // 따라서 종구는 여기서 변수 boolen checkisMoiving에 움직였는지 안움직였느지 판단하는 변수를 넣고
+                     // 몇초간 동안 수집된 가속도 센서 데이터를 저장해줘야된다. 여기에 변수를 만들어 저장해줘야한다...!
+                     // checkMoving();
 
-
-
-
-
+                     // TODO: 2017. 7. 25. 서버로 보낸다...(이건 내가한다!)
+                     
                    //  mDeviceAddress = btDevice.getAddress();
                     // mBluetoothLeService.connect(mDeviceAddress);
                  }
