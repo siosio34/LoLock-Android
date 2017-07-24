@@ -13,6 +13,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +40,7 @@ import com.google.api.services.calendar.model.Events;
 import com.google.common.eventbus.Subscribe;
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.Response.ResponseWeather;
+import com.gunghi.tgwing.lolock.model.GoogleSchedularData;
 import com.gunghi.tgwing.lolock.model.UserInfo;
 import com.gunghi.tgwing.lolock.network.LoLockService;
 import com.gunghi.tgwing.lolock.network.LoLockServiceGenarator;
@@ -71,6 +75,10 @@ public class FragmentInfo extends Fragment {
     TextView rainPercentTextView;
     TextView cloudAmounTextView;
 
+    private ArrayList<GoogleSchedularData> googleSchedularDatas;
+    private GoogleScheularAdapter googleScheularAdapter;
+
+
 
     @Nullable
     @Override
@@ -81,7 +89,20 @@ public class FragmentInfo extends Fragment {
         getWeartherInfo();
 
         EventBus.getInstance().register(this);
+
+         RecyclerView schularRecyclerview = (RecyclerView) rootView.findViewById(R.id.schedularRecyclerView);
+         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+         schularRecyclerview.setLayoutManager(mLayoutManager);
+         schularRecyclerview.setHasFixedSize(true);
+         schularRecyclerview.scrollToPosition(0);
+
+         googleSchedularDatas = new ArrayList<>();
+         googleScheularAdapter = new GoogleScheularAdapter(googleSchedularDatas,getContext());
+         schularRecyclerview.setAdapter(googleScheularAdapter);
+         schularRecyclerview.setItemAnimator(new DefaultItemAnimator());
+
         getSchedule();
+
 
         return rootView;
     }
@@ -174,6 +195,8 @@ public class FragmentInfo extends Fragment {
 
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = { CalendarScopes.CALENDAR_READONLY };
+
+
 
     private void getSchedule() {
 
@@ -327,20 +350,38 @@ public class FragmentInfo extends Fragment {
                  .setOrderBy("startTime")
                  .setSingleEvents(true)
                  .execute();
+
          List<Event> items = events.getItems();
-         Log.d("getDataFromApi Size",String.valueOf(items.size()));
 
          for (Event event : items) {
              DateTime start = event.getStart().getDateTime();
              Log.d("event",event.toString());
+
+
              if (start == null) {
                  // All-day events don't have start times, so just use
                  // the start date.
                  start = event.getStart().getDate();
              }
+
+             String eventSummary = event.getSummary();
+             String startTime = start.toString();
+             String splitTime = startTime.substring(11,16);
+
+             // TODO: 2017. 7. 25. 월일 가져오기 
+
+             GoogleSchedularData googleSchedularData = new GoogleSchedularData();
+             googleSchedularData.setStartTime(splitTime);
+             googleSchedularData.setSummaryTitle(eventSummary);
+             googleSchedularData.setGoogleLink(event.getHtmlLink());
+           //  Log.d("Datas.size(22",String.valueOf(googleSchedularDatas.size()));
+             googleSchedularDatas.add(googleSchedularData);
+
+             Log.d("Datas.size()",String.valueOf(googleSchedularDatas.size()));
              eventStrings.add(
                      String.format("%s (%s)", event.getSummary(), start));
          }
+
          return eventStrings;
      }
 
@@ -353,10 +394,13 @@ public class FragmentInfo extends Fragment {
      @Override
      protected void onPostExecute(List<String> output) {
          mProgress.hide();
+         googleScheularAdapter.notifyDataSetChanged();
          if (output == null || output.size() == 0) {
              // 아무런 결과가없때
          } else {
              output.add(0, "Data retrieved using the Google Calendar API:");
+
+             Log.d("dddd","ddd");
             // 데이터 가져온건가..?
          }
      }
@@ -423,6 +467,49 @@ public class FragmentInfo extends Fragment {
                  break;
          }
      }
+
+    private class GoogleScheularAdapter extends RecyclerView.Adapter<GoogleScheularAdapter.ViewHolder> {
+
+        private ArrayList<GoogleSchedularData> thisgoogleSchedularDatas;
+        private Context context;
+
+        public GoogleScheularAdapter(ArrayList<GoogleSchedularData> googleSchedularDatas, Context context) {
+            this.thisgoogleSchedularDatas = googleSchedularDatas;
+            this.context = context;
+        }
+
+        @Override
+        public GoogleScheularAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_scedule, parent, false);
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(GoogleScheularAdapter.ViewHolder holder, int position) {
+            final GoogleSchedularData googleSchedularData =
+                    thisgoogleSchedularDatas.get(position);
+
+            holder.scheularTitle.setText(googleSchedularData.getSummaryTitle());
+            holder.scheularStartTime.setText(googleSchedularData.getStartTime());
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return thisgoogleSchedularDatas.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public TextView scheularTitle;
+            public TextView scheularStartTime;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                scheularTitle = (TextView) itemView.findViewById(R.id.schedularName);
+                scheularStartTime = (TextView) itemView.findViewById(R.id.schedularTime);
+            }
+        }
+    }
 
 
 }

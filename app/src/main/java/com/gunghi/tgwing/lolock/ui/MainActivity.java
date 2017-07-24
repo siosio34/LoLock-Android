@@ -185,7 +185,6 @@ public class MainActivity extends AppCompatActivity  {
                                 Log.d("쓰기 가능한 서비스",String.valueOf(writeAbleCharacteristic.getProperties()));
                                 String temp = "jonggusibal" + '\0';
 
-
                                 writeAbleCharacteristic.setValue(temp.getBytes());
                                 writeAbleCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
                                 mBluetoothLeService.writeCharacterisstic(writeAbleCharacteristic);
@@ -365,7 +364,8 @@ public class MainActivity extends AppCompatActivity  {
       //      scanLeDevice(false);
       //  }
       //  unregisterReceiver(mGattUpdateReceiver);
-        mSensorManager.unregisterListener(mAccLis);
+        if(mAccLis != null)
+         mSensorManager.unregisterListener(mAccLis);
         //scanLeDevice(false);
     }
 
@@ -375,7 +375,8 @@ public class MainActivity extends AppCompatActivity  {
         super.onDestroy();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
-        mSensorManager.unregisterListener(mAccLis);
+        if(mAccLis != null)
+            mSensorManager.unregisterListener(mAccLis);
     }
 
     private void scanLeDevice(final boolean enable) {
@@ -575,7 +576,6 @@ public class MainActivity extends AppCompatActivity  {
         mBottomBar.onSaveInstanceState(outState);
     }
 
-
      @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
      private ScanCallback mScanCallback = new ScanCallback() {
 
@@ -647,4 +647,6 @@ public class MainActivity extends AppCompatActivity  {
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
         return intentFilter;
     }
+
+
 }

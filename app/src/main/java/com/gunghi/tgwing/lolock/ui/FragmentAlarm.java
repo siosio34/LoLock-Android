@@ -117,7 +117,6 @@ public class FragmentAlarm extends Fragment {
 
             String nameText = "";
 
-            // TODO: 2017. 7. 22. 타임 가져오긔
             if(inoutLog.getStrangeFlag() == 1 ) {
                 holder.inOutContainer.setBackgroundColor(Color.parseColor("#FF9797"));
                 holder.inOutContainer.setAlpha(0.85f);

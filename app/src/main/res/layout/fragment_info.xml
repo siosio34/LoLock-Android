@@ -141,13 +141,40 @@
         app:layout_constraintLeft_toLeftOf="parent"
         />
 
+    <View
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#95989A"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewminiAlarm"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        />
+
+    <TextView
+        android:id="@+id/infoDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="7월 30일 일요일"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewminiAlarm"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="28dp"
+        />
+
+
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/schedularRecyclerView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewminiAlarm"
+        android:layout_marginTop="60dp"
+        >
     </android.support.v7.widget.RecyclerView>
-
 
 
 </android.support.constraint.ConstraintLayout>
