@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+      //  registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
 
     }
     private void scanBLE() {
@@ -361,10 +361,10 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onPause() {
         super.onPause();
-        if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
-            scanLeDevice(false);
-        }
-        unregisterReceiver(mGattUpdateReceiver);
+      //  if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
+      //      scanLeDevice(false);
+      //  }
+      //  unregisterReceiver(mGattUpdateReceiver);
         mSensorManager.unregisterListener(mAccLis);
         //scanLeDevice(false);
     }

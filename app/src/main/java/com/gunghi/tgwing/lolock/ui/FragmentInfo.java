@@ -147,8 +147,8 @@ public class FragmentInfo extends Fragment {
             case "맑음":
                 weatherIconImageView.setImageResource(R.drawable.ic_sun);
                 break;
-            case "구름 조금":
-            case "구름 많음":
+            case "구름조금":
+            case "구름많음":
             case "흐림":
                 weatherIconImageView.setImageResource(R.drawable.ic_weather_cloud);
                 break;
@@ -328,7 +328,7 @@ public class FragmentInfo extends Fragment {
                  .setSingleEvents(true)
                  .execute();
          List<Event> items = events.getItems();
-         Log.d("getDataFromApi Sizez",String.valueOf(items.size()));
+         Log.d("getDataFromApi Size",String.valueOf(items.size()));
 
          for (Event event : items) {
              DateTime start = event.getStart().getDateTime();
