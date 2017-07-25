@@ -68,19 +68,23 @@ import static android.app.Activity.RESULT_OK;
 
 public class FragmentInfo extends Fragment {
 
+    static final int REQUEST_ACCOUNT_PICKER = 1000;
+    static final int REQUEST_AUTHORIZATION = 1001;
+    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
+    static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
+    private static final String PREF_ACCOUNT_NAME = "accountName";
+    private static final String[] SCOPES = { CalendarScopes.CALENDAR_READONLY };
     LoLockService loLockService;
-
     ImageView weatherIconImageView;
     TextView currentTempatureTextView;
     TextView maxMinTempatureTextView;
     TextView currentLocaleTextView;
     TextView rainPercentTextView;
     TextView cloudAmounTextView;
-
+    GoogleAccountCredential mCredential;
+    ProgressDialog mProgress;
     private ArrayList<GoogleSchedularData> googleSchedularDatas;
     private GoogleScheularAdapter googleScheularAdapter;
-
-
 
     @Nullable
     @Override
@@ -130,13 +134,15 @@ public class FragmentInfo extends Fragment {
 
     private void getWeartherInfo() {
         String loLockKey = UserInfo.getInstance().getLolockLTID();
-        Log.d("lolockey",loLockKey);
+       // Log.d("lolockey",loLockKey);
         Call<ResponseWeather> responseWeatherCall = loLockService.getWeatherData(loLockKey);
         responseWeatherCall.enqueue(new Callback<ResponseWeather>() {
             @Override
             public void onResponse(Call<ResponseWeather> call, Response<ResponseWeather> response) {
-                Log.d("weather",response.toString());
-                weatherDataMappingUI(response.body());
+                if(response.isSuccessful()) {
+                    Log.d("weather", response.toString());
+                    weatherDataMappingUI(response.body());
+                }
             }
 
             @Override
@@ -186,19 +192,6 @@ public class FragmentInfo extends Fragment {
                 break;
         }
     }
-
-    GoogleAccountCredential mCredential;
-    ProgressDialog mProgress;
-
-    static final int REQUEST_ACCOUNT_PICKER = 1000;
-    static final int REQUEST_AUTHORIZATION = 1001;
-    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
-    static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
-
-    private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = { CalendarScopes.CALENDAR_READONLY };
-
-
 
     private void getSchedule() {
 
@@ -258,32 +251,33 @@ public class FragmentInfo extends Fragment {
         return (networkInfo != null && networkInfo.isConnected());
     }
 
-    /**
-     * Check that Google Play services APK is installed and up to date.
-     * @return true if Google Play Services is available and up to
-     *     date on this device; false otherwise.
-  */
- private boolean isGooglePlayServicesAvailable() {
-     GoogleApiAvailability apiAvailability =
-             GoogleApiAvailability.getInstance();
-     final int connectionStatusCode =
-             apiAvailability.isGooglePlayServicesAvailable(getContext());
-     return connectionStatusCode == ConnectionResult.SUCCESS;
- }
+       /**
+        * Check that Google Play services APK is installed and up to date.
+        * @return true if Google Play Services is available and up to
+        *     date on this device; false otherwise.
+     */
 
- /**
-  * Attempt to resolve a missing, out-of-date, invalid or disabled Google
-  * Play Services installation via a user dialog, if possible.
-  */
- private void acquireGooglePlayServices() {
-     GoogleApiAvailability apiAvailability =
-             GoogleApiAvailability.getInstance();
-     final int connectionStatusCode =
-             apiAvailability.isGooglePlayServicesAvailable(getContext());
-     if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
-         showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
-     }
- }
+       private boolean isGooglePlayServicesAvailable() {
+        GoogleApiAvailability apiAvailability =
+                GoogleApiAvailability.getInstance();
+        final int connectionStatusCode =
+                apiAvailability.isGooglePlayServicesAvailable(getContext());
+        return connectionStatusCode == ConnectionResult.SUCCESS;
+    }
+
+    /**
+     * Attempt to resolve a missing, out-of-date, invalid or disabled Google
+     * Play Services installation via a user dialog, if possible.
+     */
+    private void acquireGooglePlayServices() {
+        GoogleApiAvailability apiAvailability =
+                GoogleApiAvailability.getInstance();
+        final int connectionStatusCode =
+                apiAvailability.isGooglePlayServicesAvailable(getContext());
+        if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
+            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
+        }
+    }
 
 
  /**
@@ -301,6 +295,48 @@ public class FragmentInfo extends Fragment {
              REQUEST_GOOGLE_PLAY_SERVICES);
      dialog.show();
  }
+
+    @Subscribe
+    public void onActivityResultEvent(ActivityResultEvent activityResultEvent) {
+        onActivityResult(activityResultEvent.getRequestCode(),activityResultEvent.getResultCode(),activityResultEvent.getData());
+    }
+
+     @Override
+     public void onActivityResult(
+             int requestCode, int resultCode, Intent data) {
+
+         Log.d("프래그먼트 리절트", "들어옴");
+         switch(requestCode) {
+             case REQUEST_GOOGLE_PLAY_SERVICES:
+                 if (resultCode != RESULT_OK) {
+                     // 구글 플레이 서비스를 이용할수 없음..
+                 } else {
+                     getResultsFromApi();
+                 }
+                 break;
+             case REQUEST_ACCOUNT_PICKER:
+                 if (resultCode == RESULT_OK && data != null &&
+                         data.getExtras() != null) {
+                     String accountName =
+                             data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                     if (accountName != null) {
+                         SharedPreferences settings =
+                                 getActivity().getPreferences(Context.MODE_PRIVATE);
+                         SharedPreferences.Editor editor = settings.edit();
+                         editor.putString(PREF_ACCOUNT_NAME, accountName);
+                         editor.apply();
+                         mCredential.setSelectedAccountName(accountName);
+                         getResultsFromApi();
+                     }
+                 }
+                 break;
+             case REQUEST_AUTHORIZATION:
+                 if (resultCode == RESULT_OK) {
+                     getResultsFromApi();
+                 }
+                 break;
+         }
+     }
 
  /**
   * An asynchronous task that handles the Google Calendar API call.
@@ -370,7 +406,7 @@ public class FragmentInfo extends Fragment {
              String startTime = start.toString();
              String splitTime = startTime.substring(11,16);
 
-             // TODO: 2017. 7. 25. 월일 가져오기 
+             // TODO: 2017. 7. 25. 월일 가져오기
 
              GoogleSchedularData googleSchedularData = new GoogleSchedularData();
              googleSchedularData.setStartTime(splitTime);
@@ -401,7 +437,6 @@ public class FragmentInfo extends Fragment {
              // 아무런 결과가없때
          } else {
              output.add(0, "Data retrieved using the Google Calendar API:");
-
              Log.d("dddd","ddd");
             // 데이터 가져온건가..?
          }
@@ -427,48 +462,6 @@ public class FragmentInfo extends Fragment {
          }
         }
     }
-
-    @Subscribe
-    public void onActivityResultEvent(ActivityResultEvent activityResultEvent) {
-        onActivityResult(activityResultEvent.getRequestCode(),activityResultEvent.getResultCode(),activityResultEvent.getData());
-    }
-
-     @Override
-     public void onActivityResult(
-             int requestCode, int resultCode, Intent data) {
-
-         Log.d("프래그먼트 리절트", "들어옴");
-         switch(requestCode) {
-             case REQUEST_GOOGLE_PLAY_SERVICES:
-                 if (resultCode != RESULT_OK) {
-                     // 구글 플레이 서비스를 이용할수 없음..
-                 } else {
-                     getResultsFromApi();
-                 }
-                 break;
-             case REQUEST_ACCOUNT_PICKER:
-                 if (resultCode == RESULT_OK && data != null &&
-                         data.getExtras() != null) {
-                     String accountName =
-                             data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                     if (accountName != null) {
-                         SharedPreferences settings =
-                                 getActivity().getPreferences(Context.MODE_PRIVATE);
-                         SharedPreferences.Editor editor = settings.edit();
-                         editor.putString(PREF_ACCOUNT_NAME, accountName);
-                         editor.apply();
-                         mCredential.setSelectedAccountName(accountName);
-                         getResultsFromApi();
-                     }
-                 }
-                 break;
-             case REQUEST_AUTHORIZATION:
-                 if (resultCode == RESULT_OK) {
-                     getResultsFromApi();
-                 }
-                 break;
-         }
-     }
 
     private class GoogleScheularAdapter extends RecyclerView.Adapter<GoogleScheularAdapter.ViewHolder> {
 
