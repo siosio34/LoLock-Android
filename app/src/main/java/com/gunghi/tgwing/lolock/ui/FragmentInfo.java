@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -485,12 +487,19 @@ public class FragmentInfo extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(GoogleScheularAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(GoogleScheularAdapter.ViewHolder holder, final int position) {
             final GoogleSchedularData googleSchedularData =
                     thisgoogleSchedularDatas.get(position);
 
             holder.scheularTitle.setText(googleSchedularData.getSummaryTitle());
             holder.scheularStartTime.setText(googleSchedularData.getStartTime());
+            holder.schedularConstraintLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(googleSchedularData.getGoogleLink()));
+                    startActivity(intent);
+                }
+            });
 
         }
 
@@ -502,11 +511,13 @@ public class FragmentInfo extends Fragment {
         public class ViewHolder extends RecyclerView.ViewHolder {
             public TextView scheularTitle;
             public TextView scheularStartTime;
+            private ConstraintLayout schedularConstraintLayout;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 scheularTitle = (TextView) itemView.findViewById(R.id.schedularName);
                 scheularStartTime = (TextView) itemView.findViewById(R.id.schedularTime);
+                schedularConstraintLayout = (ConstraintLayout) itemView.findViewById(R.id.cardSchedule);
             }
         }
     }
