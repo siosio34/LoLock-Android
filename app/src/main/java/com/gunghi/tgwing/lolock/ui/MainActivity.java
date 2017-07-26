@@ -585,14 +585,13 @@ public class MainActivity extends AppCompatActivity  {
                      Log.d("device 자동검색","성공");
 
                      int rssi = result.getRssi();
-                     // TODO 종구: 2017. 7. 25.  ble 가 lolock device 가 잡혔을대 동작하는 함수이다
-                     // 누가 나갔는지 알기 위해서는 여기서 일정시간동안 움직인 가속도 센서의 총데이터와 움직였는지 여부를 판단하는게 중요하다.!
-                     // 따라서 종구는 여기서 변수 boolen checkisMoiving에 움직였는지 안움직였느지 판단하는 변수를 넣고
-                     // 몇초간 동안 수집된 가속도 센서 데이터를 저장해줘야된다. 여기에 변수를 만들어 저장해줘야한다...!
-                     // checkMoving();
+                     checkMoving();
+                     //WAITING_TIME_FOR_START(30) 이후 NUMBER_OF_GETTING_VALUE(20)개 데이터 수집
+                     //bolean isMoving과 float accelData[0~19]에 저장
 
                      // TODO: 2017. 7. 25. 서버로 보낸다...(이건 내가한다!)
-                     
+                     //서버로 보낸후 isMoving=false, accelData[0~19]=0 초기화 필요
+
                    //  mDeviceAddress = btDevice.getAddress();
                     // mBluetoothLeService.connect(mDeviceAddress);
                  }
