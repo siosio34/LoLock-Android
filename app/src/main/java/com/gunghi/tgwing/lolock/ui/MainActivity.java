@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity  {
     // 가속도 센서 필요 멤버변수
     private int mShakeCount=0;
     private int delayCount=0;
-    private boolean moving = false;
+    private boolean isMoving = false;
     private static final int WAITING_TIME_FOR_START = 30;
     private static final int NUMBER_OF_GETTING_VALUE = 20;
     private static final float THRESHOLD_GRAVITY_HIGH = 1.25F;
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity  {
     private SensorManager mSensorManager = null;
     private SensorEventListener mAccLis;
     private Sensor mAccelometerSensor = null;
-
+    private float[] accelData = new float[25];
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -284,9 +284,6 @@ public class MainActivity extends AppCompatActivity  {
         initFragment();
         initView(savedInstanceState);
         checkBLE();
-
-        //checkMoving();  <-- 작동기재가 필요, 작동시 moving 변수에 true or false 를 잠깐 남겼다가 false로 초기화됨
-        //원본 test src URL = https://github.com/Loloara/AndroidStudy/tree/master/AccelometerSensorTest
 
         String freamgentFlag = getIntent().getStringExtra("viewFragment");
         if(freamgentFlag != null) {
@@ -537,24 +534,24 @@ public class MainActivity extends AppCompatActivity  {
                     double f = gravityX * gravityX + gravityY * gravityY + gravityZ * gravityZ;
                     double squaredD = Math.sqrt(f);
                     float gForce = (float) squaredD;
+                    accelData[delayCount-WAITING_TIME_FOR_START-1] = gForce;
 
                     if (gForce > THRESHOLD_GRAVITY_HIGH || gForce < THRESHOLD_GRAVITY_LOW) {
                         mShakeCount++;
-                        moving = true;
+                        isMoving = true;
                     }
                     Log.e("LOG", "Count: " + String.format("%d", mShakeCount) + "     gForce: " + String.format("%f", gForce));
                 }
                 if(delayCount == WAITING_TIME_FOR_START + NUMBER_OF_GETTING_VALUE + 1){
-                    if(moving)
+                    if(isMoving)
                         Log.e("LOG", "This phone is moving");
                     else
                         Log.e("LOG", "This phone is stopped");
                 }
 
                 if(delayCount == WAITING_TIME_FOR_START + NUMBER_OF_GETTING_VALUE + 2){
-                    //해제하면서 moving을 포함한 변수들 초기화
+                    //해제하면서 변수들 초기화
                     mSensorManager.unregisterListener(mAccLis);
-                    moving = false;
                     mShakeCount = 0;
                     delayCount = 0;
                 }
