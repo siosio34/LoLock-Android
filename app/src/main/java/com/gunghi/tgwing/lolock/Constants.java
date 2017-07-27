@@ -4,8 +4,6 @@ package com.gunghi.tgwing.lolock;
  * Created by joyeongje on 2017. 7. 1..
  */
 
-import com.gunghi.tgwing.lolock.bluetooth.BluetoothChatService;
-
 /**
  * Defines several constants used between {@link BluetoothChatService} and the UI.
  */

@@ -1,4 +1,4 @@
-package com.gunghi.tgwing.lolock.fcm;
+package com.gunghi.tgwing.lolock.service;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -30,6 +30,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static final String PUSH_STRANGE_ALARM = "2";
     public static final String PUSH_OUT_CHECK_USER = "3";
     public static final String PUSH_IN_CHECK_USER = "4";
+
+    public static boolean IN_OUT_CODE = false;
 
     private LoLockService lolockService;
 
@@ -95,11 +97,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
+
     /**
      * Create and show a simple notification containing the received FCM message.
      *
      * @param messageBody FCM message body received.
      */
+
     private void sendNotification(String messageBody) {
 
         Intent intent = new Intent(this,SplashActivity.class);
@@ -107,24 +111,40 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Log.d("FirebaseMessage Service",messageBody);
 
+        String title = "";
+        String content = "";
+
+
         try {
+
             JSONObject jsonObject = new JSONObject(messageBody);
+            content = jsonObject.getString("message");
             switch (jsonObject.getString("pushCode")) {
+
+                // 액티비티 전환
                 case PUSH_WEATHER_PLAN:
                     intent.putExtra("viewFragment","weatherPlan");
+                    title = "날씨 및 일정";
                     break;
                 case PUSH_IN_OUT_LOG:
                     intent.putExtra("viewFragment","inOutLog");
+                    title = "출입 로그";
                     break;
                 case PUSH_STRANGE_ALARM:
-                    intent.putExtra("viewFragment","inOutLog");
+                    intent.putExtra("viewFragment","strangeAlarm");
+                    title = "위험";
                     break;
+
+                // 걍 인터넷 통신만 해야됨...
                 case PUSH_OUT_CHECK_USER:
-                    intent.putExtra("viewFragment", "checkOutUser");
+                    intent.putExtra("viewFragment", "");
+                    IN_OUT_CODE = true;
                     break;
                 case PUSH_IN_CHECK_USER:
-                    intent.putExtra("viewFragment", "checkInUser");
+                    intent.putExtra("viewFragment", "");
+                    IN_OUT_CODE = false;
                     break;
+
             }
 
         } catch (JSONException e) {
@@ -135,26 +155,35 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
+        // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-        // Intent intent = new Intent(this, MainActivity.class);
-       // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-       // PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-       //         PendingIntent.FLAG_ONE_SHOT);
+        if(intent.getStringExtra("viewFragment") != null) {
+            if(intent.getStringExtra("viewFragment").length() > 0) {
+                Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher_lolock)
+                        .setContentTitle(title)
+                        .setContentText(content)
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent);
 
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher_lolock)
-                .setContentTitle("LoLock 알림")
-                .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+            } else {
+                Intent bleIntent = new Intent(this,BluetoothLeService.class);
+                startService(bleIntent);
+            }
+        }
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+
+
+
     }
+
+
 
 
 }

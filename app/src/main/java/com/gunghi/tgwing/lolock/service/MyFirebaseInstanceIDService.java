@@ -1,4 +1,4 @@
-package com.gunghi.tgwing.lolock.fcm;
+package com.gunghi.tgwing.lolock.service;
 
 import android.content.SharedPreferences;
 import android.util.Log;

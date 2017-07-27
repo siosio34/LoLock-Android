@@ -68,5 +68,17 @@ public interface LoLockService {
             @Path("deviceId") String deviceId
     );
 
+    // 나갈시 유저체크 url
+    @GET("/ThingPlug/checkout/{deviceId}")
+    Call<ResponseBody> checkOutURL(
+            @Path("deviceId") String deviceId
+    );
+
+    // 들어올시 유저체크 url
+    @GET("/ThingPlug/checkin/{deviceId}")
+    Call<ResponseBody> checkInURL(
+            @Path("deviceId") String deviceId
+    );
+
 
 }
