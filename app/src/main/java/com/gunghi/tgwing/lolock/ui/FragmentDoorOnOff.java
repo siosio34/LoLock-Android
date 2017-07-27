@@ -56,7 +56,6 @@ public class FragmentDoorOnOff extends Fragment {
 
                 doorKeycodeButton.setImageResource(R.drawable.ic_key_off_new);
                 openDoorCodeDialog.show();
-
             }
         });
         return rootView;

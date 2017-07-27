@@ -70,6 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
                         RegisterActivity.this.finish();
                         RegisterUserInfo.getInstance().setRegisterDeviceId(number);
 
+
                     } else {
                         Toast.makeText(getApplicationContext(),
                                 "잘못된 일련번호가 입력되었습니다. 다시 입력해주세요",Toast.LENGTH_SHORT).show();

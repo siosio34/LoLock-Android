@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.Response.ResponseDaumAddressAPI;
 import com.gunghi.tgwing.lolock.model.RegisterUserInfo;
+import com.gunghi.tgwing.lolock.model.UserInfo;
 import com.gunghi.tgwing.lolock.network.DaumService;
 import com.gunghi.tgwing.lolock.network.DaumServiceGenerator;
 import com.gunghi.tgwing.lolock.network.LoLockService;
@@ -78,6 +79,9 @@ public class Register2Activity extends AppCompatActivity implements EasyPermissi
                             Intent registerIntent = new Intent(Register2Activity.this, MainActivity.class);
                             startActivity(registerIntent);
                             Register2Activity.this.finish();
+                            UserInfo.getInstance().setDevideId(RegisterUserInfo.getInstance().getRegisterUserPhoneId());
+                            UserInfo.getInstance().setName(RegisterUserInfo.getInstance().getRegisterUserName());
+                            UserInfo.getInstance().setLolockLTID(RegisterUserInfo.getInstance().getRegisterDeviceId());
                         } else {
                             Toast.makeText(getApplicationContext(), "에러", Toast.LENGTH_SHORT).show();
                         }
@@ -173,7 +177,6 @@ public class Register2Activity extends AppCompatActivity implements EasyPermissi
 
         RegisterUserInfo.getInstance().setRegisterDeviceGPS_lat(String.valueOf(lat));
         RegisterUserInfo.getInstance().setRegisterDeviceGPS_lon(String.valueOf(lon));
-
 
         DaumService daumService = DaumServiceGenerator.createService(DaumService.class);
         Call<ResponseDaumAddressAPI> responseDaumAddressAPICall = daumService.changeCoordToAddress(queryAddress);
