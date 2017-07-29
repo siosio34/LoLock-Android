@@ -143,7 +143,6 @@ public class Register2Activity extends AppCompatActivity implements EasyPermissi
             return;
         }
 
-
         if (isNetworkEnabled) {
 
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -157,7 +156,6 @@ public class Register2Activity extends AppCompatActivity implements EasyPermissi
         } else {
             onNetworkSetting();
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, locationListener);
-            //// 아니면 네트워크 사용여부를 토스트로 띄우던지 해야겠다..
             //// TODO: 2017. 7. 21. 로직처리.
 
         }

@@ -123,16 +123,17 @@ public class BluetoothLeService extends Service {
 
 
         if (enable) {
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (Build.VERSION.SDK_INT < 21) {
-                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    } else {
-                        mLEScanner.stopScan(mScanCallback);
-                    }
-                }
-            }, SCAN_PERIOD);
+          // mHandler.postDelayed(new Runnable() {
+          //     @Override
+          //     public void run() {
+          //         if (Build.VERSION.SDK_INT < 21) {
+          //             mBluetoothAdapter.stopLeScan(mLeScanCallback);
+          //         } else {
+          //             mLEScanner.stopScan(mScanCallback);
+          //             mLEScanner.startScan(mScanCallback);
+          //         }
+          //     }
+          // }, SCAN_PERIOD);
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             } else {
@@ -153,12 +154,12 @@ public class BluetoothLeService extends Service {
 
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            Log.d("device 자동검색","성공");
             BluetoothDevice btDevice = result.getDevice();
             if(btDevice.getName()!= null) {
                 String deviceName = btDevice.getName();
                 if(deviceName.contains("LoLock")) {
-                    Log.d("device 자동검색","성공");
+                    if(result.getRssi() > -70)
+                    Toast.makeText(getApplicationContext(),result.getRssi() + "",Toast.LENGTH_SHORT).show();
 
                    // int rssi = result.getRssi();
                    // checkMoving();
@@ -179,6 +180,7 @@ public class BluetoothLeService extends Service {
             for (ScanResult sr : results) {
                 Log.i("ScanResult - Results", sr.toString());
             }
+
         }
 
         @Override
@@ -199,6 +201,7 @@ public class BluetoothLeService extends Service {
                         if(deviceName.contains("LoLock")) {
                             rssiBle = rssi;
                             bleCheck = true;
+                            Toast.makeText(getApplicationContext(), "rssi신호세기" + rssiBle, Toast.LENGTH_SHORT).show();
 
                             Call<ResponseBody> responseBodyCall =
                                     MyFirebaseMessagingService.IN_OUT_CODE ?
@@ -217,14 +220,7 @@ public class BluetoothLeService extends Service {
                                 }
                             });
 
-                            //Call<>
 
-                            // checkMoving();
-                           // checkMoving();
-                            //Log.d("device 자동검색","성공");
-                            // TODO: 2017. 7. 25. 이때 스캔
-                           //
-                            //sendDeviceSensorDataToServer();
                         }
                     }
                 }

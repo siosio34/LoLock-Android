@@ -15,8 +15,7 @@ import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.network.LoLockService;
 import com.gunghi.tgwing.lolock.ui.SplashActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.Map;
 
 /**
  * Created by joyeongje on 2017. 7. 16..
@@ -53,7 +52,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // messages. For more see: https://firebase.google.com/docs/cloud-messaging/concept-options
         // [END_EXCLUDE]
 
-        // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
@@ -61,13 +59,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // 백그라운드 포그라운드 둘다됨.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-            sendNotification(remoteMessage.getData().toString());
+            Map<String, String> getRemoteMessageHash = remoteMessage.getData();
+            sendNotification(getRemoteMessageHash);
         }
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            //sendNotification("DDDDD");
+           // sendNotification(remoteMessage.getNotification().get);
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -104,86 +103,68 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
 
-    private void sendNotification(String messageBody) {
+    private void sendNotification(Map<String,String> messageBody) {
 
-        Intent intent = new Intent(this,SplashActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        Log.d("FirebaseMessage Service",messageBody);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        Log.d("FirebaseMessage Service", messageBody.toString());
 
         String title = "";
-        String content = "";
+        String content = messageBody.get("message");
+        String pushCode = messageBody.get("pushCode");
+        String pushExtra = "inOutLog";
 
 
-        try {
-
-            JSONObject jsonObject = new JSONObject(messageBody);
-            content = jsonObject.getString("message");
-            switch (jsonObject.getString("pushCode")) {
-
-                // 액티비티 전환
-                case PUSH_WEATHER_PLAN:
-                    intent.putExtra("viewFragment","weatherPlan");
-                    title = "날씨 및 일정";
-                    break;
-                case PUSH_IN_OUT_LOG:
-                    intent.putExtra("viewFragment","inOutLog");
-                    title = "출입 로그";
-                    break;
-                case PUSH_STRANGE_ALARM:
-                    intent.putExtra("viewFragment","strangeAlarm");
-                    title = "위험";
-                    break;
-
-                // 걍 인터넷 통신만 해야됨...
-                case PUSH_OUT_CHECK_USER:
-                    intent.putExtra("viewFragment", "");
-                    IN_OUT_CODE = true;
-                    break;
-                case PUSH_IN_CHECK_USER:
-                    intent.putExtra("viewFragment", "");
-                    IN_OUT_CODE = false;
-                    break;
-
-            }
-
-        } catch (JSONException e) {
-            Log.d("FirebaseMessage", "can't parsing json");
-            e.printStackTrace();
+        switch (pushCode) {
+            // 액티비티 전환
+            case PUSH_WEATHER_PLAN:
+                title = "날씨 및 일정";
+                pushExtra = "weatherPlan";
+                break;
+            case PUSH_IN_OUT_LOG:
+                title = "출입 로그";
+                pushExtra = "inOutLog";
+                break;
+            case PUSH_STRANGE_ALARM:
+                title = "위험 감지";
+                pushExtra = "strangeAlarm";
+                break;
+            // 걍 인터넷 통신만 해야됨...
+            case PUSH_OUT_CHECK_USER:
+                IN_OUT_CODE = true;
+                break;
+            case PUSH_IN_CHECK_USER:
+                IN_OUT_CODE = false;
+                break;
         }
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+        if (pushCode.equals(PUSH_OUT_CHECK_USER) || pushCode.equals(PUSH_IN_CHECK_USER)) {
+            Intent bleIntent = new Intent(this, BluetoothLeService.class);
+            startService(bleIntent);
+            Log.d("start ble scan servcie", "시작");
 
-        // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        } else {
+            Intent intent = new Intent(this, SplashActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("viewFragment", pushExtra);
 
-        if(intent.getStringExtra("viewFragment") != null) {
-            if(intent.getStringExtra("viewFragment").length() > 0) {
-                Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher_lolock)
-                        .setContentTitle(title)
-                        .setContentText(content)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                    PendingIntent.FLAG_ONE_SHOT);
 
-                NotificationManager notificationManager =
-                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher_lolock)
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent);
 
-                notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-            } else {
-                Intent bleIntent = new Intent(this,BluetoothLeService.class);
-                startService(bleIntent);
-            }
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
         }
-
-
-
-
     }
-
-
-
-
 }

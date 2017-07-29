@@ -42,8 +42,11 @@ public class MainActivity extends AppCompatActivity  {
 
     private void initPushEventReciever() {
         String freamgentFlag = getIntent().getStringExtra("viewFragment");
+
+        Log.d("initPushEventReciever","연결");
         if(freamgentFlag != null) {
-            Log.d("여기에에에","들어오니니니");
+            Log.d("initPushEventReciever","들어오니니니");
+            Log.d("initPushEventReciever",freamgentFlag + "ddd");
 
             switch (freamgentFlag) {
                 case "weatherPlan":
@@ -53,9 +56,12 @@ public class MainActivity extends AppCompatActivity  {
                     getSupportFragmentManager().beginTransaction().
                             replace(R.id.mainActivityFragmentContainer, currentSelectedFragment).
                             commit();
+                    Log.d("freamgentFlag","weatherPlan");
                     break;
                 case "inOutLog":
+                    Log.d("freamgentFlag","inOutLog");
                 case "strangeAlarm":
+                    Log.d("freamgentFlag","strangeAlarm");
                     currentSelectedFragment = fragmentAlarm;
                     mainTitleTextView.setText("출입기록");
                     mBottomBar.selectTabAtPosition(3, true);
@@ -77,8 +83,6 @@ public class MainActivity extends AppCompatActivity  {
 
         initFragment();
         initView(savedInstanceState);
-        initPushEventReciever();
-
         //checkBLE();
 
     }
@@ -86,6 +90,7 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onResume() {
         super.onResume();
+        initPushEventReciever();
       //  registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
 
     }

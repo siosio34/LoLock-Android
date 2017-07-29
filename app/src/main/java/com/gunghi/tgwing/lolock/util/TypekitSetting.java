@@ -17,6 +17,5 @@ public class TypekitSetting extends Application {
         Typekit.getInstance()
                 .addNormal(Typekit.createFromAsset(this, "NanumBarunpenR.ttf"))
                 .addBold(Typekit.createFromAsset(this, "NanumBarunpenB.ttf"));
-
     }
 }

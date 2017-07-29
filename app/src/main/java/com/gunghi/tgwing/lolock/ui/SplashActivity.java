@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.gunghi.tgwing.lolock.R;
 import com.gunghi.tgwing.lolock.Response.ResponseUserInfo;
-import com.gunghi.tgwing.lolock.service.BluetoothLeService;
 import com.gunghi.tgwing.lolock.model.RegisterUserInfo;
 import com.gunghi.tgwing.lolock.model.UserInfo;
 import com.gunghi.tgwing.lolock.network.LoLockService;
@@ -41,9 +40,7 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
         freamgentFlag = getIntent().getStringExtra("viewFragment");
-
-        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-        startService(gattServiceIntent);
+        Log.d("spalash freamgentFlag",freamgentFlag +"zz");
 
         //상단바 색깔 바꾸기
         Window window = getWindow();
