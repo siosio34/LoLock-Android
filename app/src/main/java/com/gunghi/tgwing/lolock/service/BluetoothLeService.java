@@ -17,7 +17,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -52,9 +51,6 @@ public class BluetoothLeService extends Service {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mBluetoothGatt;
 
-    private Handler mHandler;
-
-
     private static final int WAITING_TIME_FOR_START = 30;
     private static final int NUMBER_OF_GETTING_VALUE = 20;
     private static final float THRESHOLD_GRAVITY_HIGH = 1.25F;
@@ -88,7 +84,6 @@ public class BluetoothLeService extends Service {
     public void onCreate() {
         Log.d("BluetoothLeService","onCreate");
         loLockService = LoLockServiceGenarator.createService(LoLockService.class);
-        mHandler = new Handler();
 
         if(!initialize()) {
             this.stopSelf();
@@ -123,17 +118,7 @@ public class BluetoothLeService extends Service {
 
 
         if (enable) {
-          //   mHandler.postDelayed(new Runnable() {
-          //       @Override
-          //       public void run() {
-          //           if (Build.VERSION.SDK_INT < 21) {
-          //               mBluetoothAdapter.stopLeScan(mLeScanCallback);
-          //           } else {
-          //               mLEScanner.stopScan(mScanCallback);
-          //             //  mLEScanner.startScan(mScanCallback);
-          //           }
-          //       }
-          //   }, SCAN_PERIOD);
+
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             } else {
@@ -174,12 +159,10 @@ public class BluetoothLeService extends Service {
                 String deviceName = btDevice.getName();
                 if(deviceName.contains("LoLock")) {
 
-                  //  Log.d("SearchLoLock",  calculateDistance(-59,result.getRssi()) + "");
-              //      checkMoving();
-              //      mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-              //      mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-              //      mAccLis = new AccelometerListener();
-              //      mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
+                    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+                    mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                    mAccLis = new AccelometerListener();
+                    mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
 
 
                    // Toast.makeText(getApplicationContext(),"추정거리 " +
@@ -205,14 +188,14 @@ public class BluetoothLeService extends Service {
 
 
                    // int rssi = result.getRssi();
-                   // checkMoving();
+                    // checkMoving();
                     //WAITING_TIME_FOR_START(30) 이후 NUMBER_OF_GETTING_VALUE(20)개 데이터 수집
                     //bolean isMoving과 float accelData[0~19]에 저장
 
                     // TODO: 2017. 7. 25. 서버로 보낸다...(이건 내가한다!)
                     //서버로 보낸후 isMoving=false, accelData[0~19]=0 초기화 필요
 
-                    //  mDeviceAddress = btDevice.getAddress();
+                    // mDeviceAddress = btDevice.getAddress();
                     // mBluetoothLeService.connect(mDeviceAddress);
                 }
             }
@@ -228,9 +211,9 @@ public class BluetoothLeService extends Service {
 
         @Override
         public void onScanFailed(int errorCode) {
-            Log.e("Scan Failed", "Error Code: " + errorCode);
-        }
-    };
+        Log.e("Scan Failed", "Error Code: " + errorCode);
+    }
+};
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
             new BluetoothAdapter.LeScanCallback() {
@@ -288,12 +271,6 @@ public class BluetoothLeService extends Service {
         mBluetoothGatt = null;
     }
 
-    private void checkMoving(){
-
-
-        //WAITING_TIME_FOR_START(30) 만큼 기다렸다가 NUMBER_OF_GETTING_VALUE(20) 만큼 동안 움직임을 측정 후 Listener를 자동 해제한다.
-    }
-
     private class AccelometerListener implements SensorEventListener {
 
         @Override
@@ -301,18 +278,18 @@ public class BluetoothLeService extends Service {
             if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
                 delayCount++;
                 if(delayCount > WAITING_TIME_FOR_START && delayCount <= WAITING_TIME_FOR_START + NUMBER_OF_GETTING_VALUE) {
-                    double accX = event.values[0];
-                    double accY = event.values[1];
-                    double accZ = event.values[2];
+                        double accX = event.values[0];
+                        double accY = event.values[1];
+                        double accZ = event.values[2];
 
                     accX = accX / SensorManager.GRAVITY_EARTH;
                     accY = accY / SensorManager.GRAVITY_EARTH;
                     accZ = accZ / SensorManager.GRAVITY_EARTH;
 
-                    double squaredD = accX * accX + accY * accY + accZ * accZ;
-                    squaredD = Math.sqrt(squaredD);
-                    float gForce = (float) squaredD;
-                    accelData[delayCount-WAITING_TIME_FOR_START-1] = gForce;
+                        double squaredD = accX * accX + accY * accY + accZ * accZ;
+                        squaredD = Math.sqrt(squaredD);
+                        float gForce = (float) squaredD;
+                        accelData[delayCount-WAITING_TIME_FOR_START-1] = gForce;
 
                     if (gForce > THRESHOLD_GRAVITY_HIGH || gForce < THRESHOLD_GRAVITY_LOW) {
                         mShakeCount++;
@@ -354,7 +331,6 @@ public class BluetoothLeService extends Service {
     }
 
     private void initializeSensorValue() {
-
         isMoving = false;
         bleCheck = false;
         rssiBle = 0;
@@ -377,8 +353,9 @@ public class BluetoothLeService extends Service {
                 if(mAccLis != null)
                     mSensorManager.unregisterListener(mAccLis);
 
+                Log.d("sendSensorDataToServer","들어옴");
                 startLoraScan(false);
-
+                stopSelf();
             }
 
             @Override
@@ -387,8 +364,6 @@ public class BluetoothLeService extends Service {
             }
         });
 
-
-        // TODO: 2017. 7. 28. 서버로 저장 서버로 다 처리후 스탑 서비스로 종료
     }
 
 

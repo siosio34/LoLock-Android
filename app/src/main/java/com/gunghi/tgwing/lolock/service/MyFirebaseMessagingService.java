@@ -140,10 +140,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         if (pushCode.equals(PUSH_OUT_CHECK_USER) || pushCode.equals(PUSH_IN_CHECK_USER)) {
-//            Intent bleIntent = new Intent(this, BluetoothLeService.class);
-//            startService(bleIntent);
-//            Log.d("start ble scan servcie", "시작");
-
+            Intent bleIntent = new Intent(this, BluetoothLeService.class);
+            startService(bleIntent);
+            Log.d("start ble scan servcie", "시작");
         } else {
             Intent intent = new Intent(this, SplashActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
