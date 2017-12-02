@@ -71,12 +71,13 @@ public class FragmentAlarm extends Fragment {
         callLolockService.enqueue(new Callback<ResponseInOutLog>() {
             @Override
             public void onResponse(Call<ResponseInOutLog> call, Response<ResponseInOutLog> response) {
+                Log.d("Success","Suc");
                 alramDataMappingUi(response.body());
             }
 
             @Override
             public void onFailure(Call<ResponseInOutLog> call, Throwable t) {
-
+                Log.d("Fail","Fail");
             }
         });
     }

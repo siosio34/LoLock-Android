@@ -162,7 +162,7 @@ public class BluetoothLeService extends Service {
                     Toast.makeText(getApplicationContext(),result.getRssi() + "",Toast.LENGTH_SHORT).show();
 
                    // int rssi = result.getRssi();
-                   // checkMoving();
+                    // checkMoving();
                     //WAITING_TIME_FOR_START(30) 이후 NUMBER_OF_GETTING_VALUE(20)개 데이터 수집
                     //bolean isMoving과 float accelData[0~19]에 저장
 
@@ -185,9 +185,9 @@ public class BluetoothLeService extends Service {
 
         @Override
         public void onScanFailed(int errorCode) {
-            Log.e("Scan Failed", "Error Code: " + errorCode);
-        }
-    };
+        Log.e("Scan Failed", "Error Code: " + errorCode);
+    }
+};
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
             new BluetoothAdapter.LeScanCallback() {
@@ -278,18 +278,18 @@ public class BluetoothLeService extends Service {
             if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
                 delayCount++;
                 if(delayCount > WAITING_TIME_FOR_START && delayCount <= WAITING_TIME_FOR_START + NUMBER_OF_GETTING_VALUE) {
-                    double accX = event.values[0];
-                    double accY = event.values[1];
-                    double accZ = event.values[2];
+                        double accX = event.values[0];
+                        double accY = event.values[1];
+                        double accZ = event.values[2];
 
                     accX = accX / SensorManager.GRAVITY_EARTH;
                     accY = accY / SensorManager.GRAVITY_EARTH;
                     accZ = accZ / SensorManager.GRAVITY_EARTH;
 
-                    double squaredD = accX * accX + accY * accY + accZ * accZ;
-                    squaredD = Math.sqrt(squaredD);
-                    float gForce = (float) squaredD;
-                    accelData[delayCount-WAITING_TIME_FOR_START-1] = gForce;
+                        double squaredD = accX * accX + accY * accY + accZ * accZ;
+                        squaredD = Math.sqrt(squaredD);
+                        float gForce = (float) squaredD;
+                        accelData[delayCount-WAITING_TIME_FOR_START-1] = gForce;
 
                     if (gForce > THRESHOLD_GRAVITY_HIGH || gForce < THRESHOLD_GRAVITY_LOW) {
                         mShakeCount++;
