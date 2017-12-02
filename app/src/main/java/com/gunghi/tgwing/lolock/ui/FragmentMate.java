@@ -123,7 +123,12 @@ public class FragmentMate extends Fragment {
             //Log.d("url",mateInfo.getMateImageUrl());
             holder.mateName.setText(mateInfo.getMateName());
             holder.mateDoorOpenTime.setText(mateInfo.getMateDoorOpenTime());
-            holder.mateOutingFlag.setImageResource(R.drawable.ic_out_home);
+            if(mateInfo.getMateOutingFlag().equals("0"))
+                holder.mateOutingFlag.setImageResource(R.drawable.ic_out_home);
+            else {
+                holder.mateOutingFlag.setImageResource(R.drawable.ic_in_home);
+            }
+
             Picasso.with(holder.mateProfile.getContext()).load(mateInfo.getMateImageUrl()).into(holder.mateProfile);
             // TODO: 2017. 7. 1. 이미지 수정하는거 추가해야됨.!
 

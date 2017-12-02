@@ -123,17 +123,17 @@ public class BluetoothLeService extends Service {
 
 
         if (enable) {
-          // mHandler.postDelayed(new Runnable() {
-          //     @Override
-          //     public void run() {
-          //         if (Build.VERSION.SDK_INT < 21) {
-          //             mBluetoothAdapter.stopLeScan(mLeScanCallback);
-          //         } else {
-          //             mLEScanner.stopScan(mScanCallback);
-          //             mLEScanner.startScan(mScanCallback);
-          //         }
-          //     }
-          // }, SCAN_PERIOD);
+          //   mHandler.postDelayed(new Runnable() {
+          //       @Override
+          //       public void run() {
+          //           if (Build.VERSION.SDK_INT < 21) {
+          //               mBluetoothAdapter.stopLeScan(mLeScanCallback);
+          //           } else {
+          //               mLEScanner.stopScan(mScanCallback);
+          //             //  mLEScanner.startScan(mScanCallback);
+          //           }
+          //       }
+          //   }, SCAN_PERIOD);
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             } else {
@@ -149,6 +149,21 @@ public class BluetoothLeService extends Service {
 
     }
 
+    protected static double calculateDistance(int txPower, double rssi) {
+        if (rssi == 0) {
+            return -1.0; // if we cannot determine distance, return -1.
+        }
+
+        double ratio = rssi*1.0/txPower;
+        if (ratio < 1.0) {
+            return Math.pow(ratio,10);
+        }
+        else {
+            double accuracy =  (0.89976)*Math.pow(ratio,7.7095) + 0.111;
+            return accuracy;
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private ScanCallback mScanCallback = new ScanCallback() {
 
@@ -158,8 +173,36 @@ public class BluetoothLeService extends Service {
             if(btDevice.getName()!= null) {
                 String deviceName = btDevice.getName();
                 if(deviceName.contains("LoLock")) {
-                    if(result.getRssi() > -70)
-                    Toast.makeText(getApplicationContext(),result.getRssi() + "",Toast.LENGTH_SHORT).show();
+
+                  //  Log.d("SearchLoLock",  calculateDistance(-59,result.getRssi()) + "");
+              //      checkMoving();
+              //      mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+              //      mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+              //      mAccLis = new AccelometerListener();
+              //      mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
+
+
+                   // Toast.makeText(getApplicationContext(),"추정거리 " +
+                   //         calculateDistance(-59,result.getRssi()),Toast.LENGTH_SHORT).show();
+
+                    // TODO: 2017. 7. 30. 체크무빙
+                   // if(calculateDistance(4,result.getRssi()) < 1.5) {
+                   //     Toast.makeText(getApplicationContext(),"자동 문 열림",Toast.LENGTH_SHORT).show();
+                   //     if(UserInfo.getInstance().getDevideId() != null) {
+                   //         loLockService.remoteOnOffLock(UserInfo.getInstance().getDevideId()).enqueue(new Callback<ResponseBody>() {
+                   //             @Override
+                   //             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                   //                 Toast.makeText(getApplicationContext(),"자동 문 열림 성공",Toast.LENGTH_SHORT).show();
+                   //         }
+//
+                   //             @Override
+                   //             public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+                   //             }
+                   //         });
+                   //     }
+                   // }
+
 
                    // int rssi = result.getRssi();
                    // checkMoving();
@@ -201,25 +244,7 @@ public class BluetoothLeService extends Service {
                         if(deviceName.contains("LoLock")) {
                             rssiBle = rssi;
                             bleCheck = true;
-                            Toast.makeText(getApplicationContext(), "rssi신호세기" + rssiBle, Toast.LENGTH_SHORT).show();
-
-                            Call<ResponseBody> responseBodyCall =
-                                    MyFirebaseMessagingService.IN_OUT_CODE ?
-                                            loLockService.checkOutURL(UserInfo.getInstance().getDevideId())
-                                            :loLockService.checkInURL(UserInfo.getInstance().getDevideId());
-
-                            responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                }
-                            });
-
+                            //Toast.makeText(getApplicationContext(), "rssi신호세기" + rssiBle, Toast.LENGTH_SHORT).show();
 
                         }
                     }
@@ -264,10 +289,8 @@ public class BluetoothLeService extends Service {
     }
 
     private void checkMoving(){
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mAccLis = new AccelometerListener();
-        mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
+
+
         //WAITING_TIME_FOR_START(30) 만큼 기다렸다가 NUMBER_OF_GETTING_VALUE(20) 만큼 동안 움직임을 측정 후 Listener를 자동 해제한다.
     }
 
@@ -306,12 +329,19 @@ public class BluetoothLeService extends Service {
 
                 if(delayCount == WAITING_TIME_FOR_START + NUMBER_OF_GETTING_VALUE + 2){
                     //해제하면서 변수들 초기화
-                    mSensorManager.unregisterListener(mAccLis);
                     mShakeCount = 0;
                     delayCount = 0;
-                    sendSensorDataToServer();
 
-                    // TODO: 2017. 7. 28. 인터넷으로 보낸다.
+                    if(isMoving) {
+                        sendSensorDataToServer();
+                    }
+
+                    else {
+                        initializeSensorValue();
+                        if(mAccLis != null)
+                            mSensorManager.unregisterListener(mAccLis);
+                    }
+
 
                 }
             }
@@ -325,7 +355,6 @@ public class BluetoothLeService extends Service {
 
     private void initializeSensorValue() {
 
-        System.arraycopy(initAccelData,0,accelData,0,25);
         isMoving = false;
         bleCheck = false;
         rssiBle = 0;
@@ -333,7 +362,32 @@ public class BluetoothLeService extends Service {
 
 
     private void sendSensorDataToServer() {
-        initializeSensorValue();
+
+        Call<ResponseBody> responseBodyCall =
+                MyFirebaseMessagingService.IN_OUT_CODE ?
+                        loLockService.checkOutURL(UserInfo.getInstance().getDevideId())
+                        :loLockService.checkInURL(UserInfo.getInstance().getDevideId());
+
+       // Toast.makeText(getApplicationContext(),"사용자 데이터 전송",Toast.LENGTH_SHORT).show();
+
+        responseBodyCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                initializeSensorValue();
+                if(mAccLis != null)
+                    mSensorManager.unregisterListener(mAccLis);
+
+                startLoraScan(false);
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                initializeSensorValue();
+            }
+        });
+
+
         // TODO: 2017. 7. 28. 서버로 저장 서버로 다 처리후 스탑 서비스로 종료
     }
 
