@@ -52,7 +52,7 @@ public class BluetoothLeService extends Service {
     private BluetoothGatt mBluetoothGatt;
 
     private static final int WAITING_TIME_FOR_START = 30;
-    private static final int NUMBER_OF_GETTING_VALUE = 20;
+    private static final int NUMBER_OF_GETTING_VALUE = 40;
     private static final float THRESHOLD_GRAVITY_HIGH = 1.25F;
     private static final float THRESHOLD_GRAVITY_LOW = 0.8F;
 
@@ -64,10 +64,8 @@ public class BluetoothLeService extends Service {
     private SensorEventListener mAccLis;
     private Sensor mAccelometerSensor = null;
 
-    private float[] initAccelData = new float[25];
 
     private boolean isMoving = false;
-    private float[] accelData = new float[20];
 
     private boolean bleCheck = false;
     private int     rssiBle = 0;
@@ -289,7 +287,6 @@ public class BluetoothLeService extends Service {
                         double squaredD = accX * accX + accY * accY + accZ * accZ;
                         squaredD = Math.sqrt(squaredD);
                         float gForce = (float) squaredD;
-                        accelData[delayCount-WAITING_TIME_FOR_START-1] = gForce;
 
                     if (gForce > THRESHOLD_GRAVITY_HIGH || gForce < THRESHOLD_GRAVITY_LOW) {
                         mShakeCount++;
@@ -317,6 +314,9 @@ public class BluetoothLeService extends Service {
                         initializeSensorValue();
                         if(mAccLis != null)
                             mSensorManager.unregisterListener(mAccLis);
+                        startLoraScan(false);
+                        stopSelf();
+
                     }
 
 
@@ -350,6 +350,7 @@ public class BluetoothLeService extends Service {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 initializeSensorValue();
+
                 if(mAccLis != null)
                     mSensorManager.unregisterListener(mAccLis);
 
