@@ -57,8 +57,7 @@ public class BluetoothLeService extends Service {
     private static final float THRESHOLD_GRAVITY_LOW = 0.8F;
 
     // 가속도 센서 필요 멤버변수
-    private int mShakeCount=0;
-    private int delayCount=0;
+    private int delayCount = WAITING_TIME_FOR_START + 1;
 
     private SensorManager mSensorManager = null;
     private SensorEventListener mAccLis;
@@ -156,9 +155,12 @@ public class BluetoothLeService extends Service {
             if(btDevice.getName()!= null) {
                 String deviceName = btDevice.getName();
                 if(deviceName.contains("LoLock")) {
+                    startLoraScan(false);
 
                     mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
                     mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+                    Log.d("dddd","ddddddd");
                     mAccLis = new AccelometerListener();
                     mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
 
@@ -274,37 +276,30 @@ public class BluetoothLeService extends Service {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
-                delayCount++;
+
                 if(delayCount > WAITING_TIME_FOR_START && delayCount <= WAITING_TIME_FOR_START + NUMBER_OF_GETTING_VALUE) {
                         double accX = event.values[0];
                         double accY = event.values[1];
                         double accZ = event.values[2];
 
-                    accX = accX / SensorManager.GRAVITY_EARTH;
-                    accY = accY / SensorManager.GRAVITY_EARTH;
-                    accZ = accZ / SensorManager.GRAVITY_EARTH;
+                        accX = accX / SensorManager.GRAVITY_EARTH;
+                        accY = accY / SensorManager.GRAVITY_EARTH;
+                        accZ = accZ / SensorManager.GRAVITY_EARTH;
 
                         double squaredD = accX * accX + accY * accY + accZ * accZ;
                         squaredD = Math.sqrt(squaredD);
                         float gForce = (float) squaredD;
+                        delayCount++;
 
                     if (gForce > THRESHOLD_GRAVITY_HIGH || gForce < THRESHOLD_GRAVITY_LOW) {
-                        mShakeCount++;
                         isMoving = true;
                     }
-                    Log.e("LOG", "Count: " + String.format("%d", mShakeCount) + "     gForce: " + String.format("%f", gForce));
+
+                    Log.e("LOG", "Count: " + String.format("%d", delayCount) + "     gForce: " + String.format("%f", gForce));
                 }
                 if(delayCount == WAITING_TIME_FOR_START + NUMBER_OF_GETTING_VALUE + 1){
-                    if(isMoving)
-                        Log.e("LOG", "This phone is moving");
-                    else
-                        Log.e("LOG", "This phone is stopped");
-                }
-
-                if(delayCount == WAITING_TIME_FOR_START + NUMBER_OF_GETTING_VALUE + 2){
-                    //해제하면서 변수들 초기화
-                    mShakeCount = 0;
-                    delayCount = 0;
+                    delayCount++;
+                    Log.e("LOG", String.valueOf(isMoving));
 
                     if(isMoving) {
                         sendSensorDataToServer();
@@ -314,12 +309,10 @@ public class BluetoothLeService extends Service {
                         initializeSensorValue();
                         if(mAccLis != null)
                             mSensorManager.unregisterListener(mAccLis);
-                        startLoraScan(false);
+
                         stopSelf();
 
                     }
-
-
                 }
             }
         }
@@ -355,7 +348,6 @@ public class BluetoothLeService extends Service {
                     mSensorManager.unregisterListener(mAccLis);
 
                 Log.d("sendSensorDataToServer","들어옴");
-                startLoraScan(false);
                 stopSelf();
             }
 
